@@ -1,0 +1,12 @@
+.git
+.gitignore
+**/.DS_Store
+**/node_modules
+**/.angular
+**/dist
+**/build
+**/.gradle
+**/out
+**/coverage
+**/.idea
+**/.vscode

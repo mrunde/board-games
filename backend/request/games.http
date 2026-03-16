@@ -1,0 +1,50 @@
+### GET game by bggId
+GET http://localhost:8080/board-games/api/games/173346
+
+### GET all games
+GET http://localhost:8080/board-games/api/games/all
+
+### GET all games with expansions
+GET http://localhost:8080/board-games/api/games
+
+### GET all games with expansions with filters and sorting
+GET http://localhost:8080/board-games/api/games?minPlayers=2&maxPlayers=2&sort=ratingPersonal&dir=desc
+
+### POST add game
+POST http://localhost:8080/board-games/api/games
+Content-Type: application/json
+
+{
+  "bggId": 123456789,
+  "name": "Test",
+  "ratingBgg": 9.0,
+  "ratingPersonal": null,
+  "playingTimeMin": 30,
+  "playingTimeMax": 60,
+  "weight": 2.5,
+  "playersMin": 1,
+  "playersMax": 4,
+  "playersRecMin": 2,
+  "playersRecMax": 3
+}
+
+### PUT update game
+PUT http://localhost:8080/board-games/api/games/123456789
+Content-Type: application/json
+
+{
+  "bggId": 123456789,
+  "name": "Test 2",
+  "ratingBgg": 9.0,
+  "ratingPersonal": 2,
+  "playingTimeMin": 30,
+  "playingTimeMax": 60,
+  "weight": 2.5,
+  "playersMin": 1,
+  "playersMax": 4,
+  "playersRecMin": 2,
+  "playersRecMax": 3
+}
+
+### DELETE game
+DELETE http://localhost:8080/board-games/api/games/123456789

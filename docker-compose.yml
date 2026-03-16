@@ -1,0 +1,14 @@
+services:
+  boardgames-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: boardgames-app
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_FLYWAY_SCHEMAS: ${SPRING_FLYWAY_SCHEMAS}
+    ports:
+      - "8080:8080"
