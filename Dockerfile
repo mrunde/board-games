@@ -6,7 +6,7 @@ COPY frontend/package*.json ./
 RUN npm install
 
 COPY frontend/ ./
-RUN npm run build -- --base-href /board-games/
+RUN npm run build -- --configuration production --base-href /board-games/
 
 # ---- Backend build ----
 FROM eclipse-temurin:21-jdk AS backend-build
