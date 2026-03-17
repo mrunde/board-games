@@ -28,6 +28,7 @@ spring:
 
 app:
   images:
+    base-url: ${APP_BASE_URL}
     path: ${APP_IMAGES_PATH}
     public-base: /media
 

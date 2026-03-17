@@ -13,6 +13,6 @@ class ImageUrlResolver(
       imageProperties.publicBase
         .trimStart('/')
         .trimEnd('/')
-    return "http://localhost:8080/board-games/$trimmedBase/${imagePath.trimStart('/')}"
+    return "${imageProperties.baseUrl}/board-games/$trimmedBase/${imagePath.trimStart('/')}"
   }
 }
