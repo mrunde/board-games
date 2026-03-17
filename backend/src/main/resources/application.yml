@@ -26,6 +26,11 @@ spring:
     enabled: true
     schemas: ${SPRING_FLYWAY_SCHEMAS}
 
+app:
+  images:
+    path: ${APP_IMAGES_PATH}
+    public-base: /media
+
 logging:
   level:
     root: info

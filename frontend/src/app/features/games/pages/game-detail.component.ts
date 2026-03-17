@@ -19,6 +19,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       [error]="error"
       [successMessage]="successMessage"
       [title]="game?.name"
+      [imageUrl]="game?.imageUrl"
       [ratingBgg]="game?.ratingBgg"
       [ratingPersonal]="game?.ratingPersonal"
       [playingTimeMin]="game?.playingTimeMin"
@@ -46,7 +47,22 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
           *ngFor="let e of game?.expansions"
           [class.recent-exp]="ui.isRecentlyPlayed(e.lastPlayed)"
         >
-          <a [routerLink]="['/expansions', e.bggId]">{{ e.name }}</a>
+          <div class="exp-left">
+            <ng-container *ngIf="e.imageUrl; else expPlaceholder">
+              <img
+                class="exp-cover"
+                [src]="e.imageUrl!"
+                (error)="e.imageUrl = null"
+                [alt]="e.name">
+            </ng-container>
+
+            <ng-template #expPlaceholder>
+              <div class="exp-cover placeholder small"></div>
+            </ng-template>
+
+            <a [routerLink]="['/expansions', e.bggId]">{{ e.name }}</a>
+          </div>
+
           <span>{{ e.lastPlayed || '—' }}</span>
         </div>
       </div>
@@ -62,11 +78,46 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       justify-content: space-between;
       gap: 12px;
       padding: 8px 0;
+      align-items: center;
+    }
+
+    .exp-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .exp-cover {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex: 0 0 36px;
+      background: #eee;
+    }
+
+    .exp-cover.small.placeholder {
+      border: 1px dashed #c7c7c7;
+      background:
+        linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
+      background-size: 12px 12px;
     }
 
     .exp-item a {
       text-decoration: none;
       color: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .exp-item a {
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .recent-exp {
@@ -85,13 +136,13 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   successMessage: string | null = null;
   selectedPlayDate: Date | null = new Date();
 
-  private destroy$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
   private successTimeoutId: number | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private api: BoardgamesService,
-    private location: Location,
+    private readonly route: ActivatedRoute,
+    private readonly api: BoardgamesService,
+    private readonly location: Location,
     public ui: DetailPageUiService
   ) {
   }

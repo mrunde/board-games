@@ -1,10 +1,12 @@
 package runde.boardgames.dto
 
+import runde.boardgames.util.ImageUrlResolver
 import java.time.LocalDate
 
 data class GameDetailDto(
   val bggId: Int,
   val name: String,
+  val imageUrl: String?,
   val ratingBgg: Double,
   val ratingPersonal: Int?,
   val playingTimeMin: Int,
@@ -21,10 +23,12 @@ data class GameDetailDto(
     fun fromGameDto(
       gameWithLastPlayed: Pair<GameDto, LocalDate?>,
       expansionsWithLastPlayed: List<Pair<GameDto, LocalDate?>>,
+      imageUrlResolver: ImageUrlResolver,
     ): GameDetailDto =
       GameDetailDto(
         bggId = gameWithLastPlayed.first.bggId,
         name = gameWithLastPlayed.first.name,
+        imageUrl = imageUrlResolver.toPublicUrl("games/${gameWithLastPlayed.first.bggId}.jpg"),
         ratingBgg = gameWithLastPlayed.first.ratingBgg,
         ratingPersonal = gameWithLastPlayed.first.ratingPersonal,
         playingTimeMin = gameWithLastPlayed.first.playingTimeMin,
@@ -35,7 +39,14 @@ data class GameDetailDto(
         playersRecMin = gameWithLastPlayed.first.playersRecMin,
         playersRecMax = gameWithLastPlayed.first.playersRecMax,
         lastPlayed = gameWithLastPlayed.second,
-        expansions = expansionsWithLastPlayed.map { ExpansionDto.fromGameDto(it.first, it.second) },
+        expansions =
+          expansionsWithLastPlayed.map {
+            ExpansionDto.fromGameDto(
+              gameDto = it.first,
+              lastPlayed = it.second,
+              imageUrlResolver = imageUrlResolver,
+            )
+          },
       )
   }
 }
@@ -43,6 +54,7 @@ data class GameDetailDto(
 data class ExpansionDto(
   val bggId: Int,
   val name: String,
+  val imageUrl: String?,
   val ratingBgg: Double,
   val ratingPersonal: Int?,
   val playingTimeMin: Int,
@@ -59,10 +71,12 @@ data class ExpansionDto(
     fun fromGameDto(
       gameDto: GameDto,
       lastPlayed: LocalDate?,
+      imageUrlResolver: ImageUrlResolver,
     ): ExpansionDto =
       ExpansionDto(
         bggId = gameDto.bggId,
         name = gameDto.name,
+        imageUrl = imageUrlResolver.toPublicUrl("expansions/${gameDto.bggId}.jpg"),
         ratingBgg = gameDto.ratingBgg,
         ratingPersonal = gameDto.ratingPersonal,
         playingTimeMin = gameDto.playingTimeMin,

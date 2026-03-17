@@ -19,6 +19,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       [error]="error"
       [successMessage]="successMessage"
       [title]="expansion?.name"
+      [imageUrl]="expansion?.imageUrl"
       [ratingBgg]="expansion?.ratingBgg"
       [ratingPersonal]="expansion?.ratingPersonal"
       [playingTimeMin]="expansion?.playingTimeMin"

@@ -39,6 +39,14 @@ import {MatNativeDateModule} from '@angular/material/core';
       </div>
 
       <div class="card" *ngIf="!loading && !error && title" [class.recent]="recent">
+        <div class="media" *ngIf="imageUrl; else placeholder">
+          <img class="cover" [src]="imageUrl!" [alt]="title">
+        </div>
+
+        <ng-template #placeholder>
+          <div class="cover placeholder"></div>
+        </ng-template>
+
         <h1>{{ title }}</h1>
 
         <div *ngIf="mainGameName && mainGameLink" class="main-game-link">
@@ -146,6 +154,26 @@ import {MatNativeDateModule} from '@angular/material/core';
       border-color: #7cb342;
     }
 
+    .media {
+      width: 100%;
+      height: 220px;
+      margin-bottom: 12px;
+    }
+
+    .cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eee;
+    }
+
+    .placeholder {
+      border: 1px dashed #c7c7c7;
+      background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
+      background-size: 20px 20px;
+    }
+
     .main-game-link {
       margin-bottom: 10px;
       font-size: 14px;
@@ -213,6 +241,7 @@ export class DetailShellComponent {
   @Input() successMessage: string | null = null;
 
   @Input() title?: string;
+  @Input() imageUrl?: string | null;
   @Input() ratingBgg?: number;
   @Input() ratingPersonal?: number | null;
   @Input() playingTimeMin?: number;

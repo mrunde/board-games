@@ -13,31 +13,50 @@ import {GameDetail} from '../models/game.model';
       [class.recent]="isRecentlyPlayed(game.lastPlayed)"
       [class.recommended]="isRecommendedMatch()"
     >
+      <div class="media">
+        <ng-container *ngIf="game.imageUrl; else placeholder">
+          <img
+            class="cover"
+            [src]="game.imageUrl!"
+            (error)="game.imageUrl = null"
+            [alt]="game.name"
+            [routerLink]="['/games', game.bggId]"
+          >
+        </ng-container>
 
-      <div class="header">
-        <div class="title-wrap">
-          <a class="title" [routerLink]="['/games', game.bggId]">{{ game.name }}</a>
-
-          <span *ngIf="isRecommendedMatch()" class="recommended-badge">
-            ★ Recommended
-          </span>
-        </div>
-
-        <div class="last">
-          Last played
-          <div class="value">{{ game.lastPlayed || '—' }}</div>
-        </div>
+        <ng-template #placeholder>
+          <div class="cover placeholder" aria-label="No image available">
+            <span>No image</span>
+          </div>
+        </ng-template>
       </div>
 
-      <div class="meta">
-        Players {{ game.playersMin }}–{{ game.playersMax }}
-        · Time {{ game.playingTimeMin }}–{{ game.playingTimeMax }} min
-      </div>
+      <div class="content">
+        <div class="header">
+          <div class="title-wrap">
+            <a class="title" [routerLink]="['/games', game.bggId]">{{ game.name }}</a>
 
-      <div class="stats">
-        <div>BGG {{ game.ratingBgg }}</div>
-        <div>You {{ game.ratingPersonal ?? '—' }}</div>
-        <div>Weight {{ game.weight }}</div>
+            <span *ngIf="isRecommendedMatch()" class="recommended-badge">
+              ★ Recommended
+            </span>
+          </div>
+
+          <div class="last">
+            Last played
+            <div class="value">{{ game.lastPlayed || '—' }}</div>
+          </div>
+        </div>
+
+        <div class="meta">
+          Players {{ game.playersMin }}–{{ game.playersMax }}
+          · Time {{ game.playingTimeMin }}–{{ game.playingTimeMax }} min
+        </div>
+
+        <div class="stats">
+          <div>BGG {{ game.ratingBgg }}</div>
+          <div>You {{ game.ratingPersonal ?? '—' }}</div>
+          <div>Weight {{ game.weight }}</div>
+        </div>
       </div>
 
       <div *ngIf="game.expansions?.length" class="exp">
@@ -50,20 +69,39 @@ import {GameDetail} from '../models/game.model';
           *ngFor="let e of game.expansions"
           [class.recent-exp]="isRecentlyPlayed(e.lastPlayed)"
         >
-          <a [routerLink]="['/expansions', e.bggId]">{{ e.name }}</a>
+          <div class="exp-left">
+            <ng-container *ngIf="e.imageUrl; else expPlaceholder">
+              <img
+                class="exp-cover"
+                [src]="e.imageUrl!"
+                (error)="e.imageUrl = null"
+                [alt]="e.name"
+              >
+            </ng-container>
+
+            <ng-template #expPlaceholder>
+              <div class="exp-cover placeholder small"></div>
+            </ng-template>
+
+            <a [routerLink]="['/expansions', e.bggId]">{{ e.name }}</a>
+          </div>
+
           <span>{{ e.lastPlayed || '—' }}</span>
         </div>
       </div>
-
     </div>
   `,
   styles: [`
     .card {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 14px;
       background: white;
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 12px;
       border: 2px solid transparent;
+      align-items: stretch;
     }
 
     .card.recent {
@@ -80,10 +118,47 @@ import {GameDetail} from '../models/game.model';
       border-color: #ff9800;
     }
 
+    .media {
+      min-height: 150px;
+      height: 100%;
+    }
+
+    .cover {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+      display: block;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eee;
+    }
+
+    .placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border: 1px dashed #c7c7c7;
+      background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
+      background-size: 20px 20px;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
     .header {
       display: flex;
       justify-content: space-between;
       gap: 12px;
+    }
+
+    .title-wrap {
+      min-width: 0;
     }
 
     .title {
@@ -93,9 +168,21 @@ import {GameDetail} from '../models/game.model';
       color: inherit;
     }
 
+    .recommended-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8a5a00;
+      background: rgba(255, 179, 0, 0.18);
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
     .last {
       text-align: right;
       font-size: 12px;
+      flex: 0 0 auto;
     }
 
     .value {
@@ -116,17 +203,9 @@ import {GameDetail} from '../models/game.model';
       flex-wrap: wrap;
     }
 
-    .actions button {
-      border: none;
-      background: #1976d2;
-      color: white;
-      border-radius: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-
     .exp {
-      margin-top: 12px;
+      grid-column: 1 / -1;
+      margin-top: 2px;
     }
 
     .exp-title {
@@ -141,17 +220,66 @@ import {GameDetail} from '../models/game.model';
       justify-content: space-between;
       gap: 12px;
       padding: 6px 0;
+      align-items: center;
+    }
+
+    .exp-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .exp-cover {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex: 0 0 32px;
+      background: #eee;
+    }
+
+    .exp-cover.small.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #c7c7c7;
+      background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
+      background-size: 12px 12px;
     }
 
     .exp-item a {
       text-decoration: none;
       color: inherit;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .recent-exp {
       background: rgba(124, 179, 66, 0.08);
       border-radius: 8px;
       padding: 6px 8px;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .media,
+      .cover {
+        min-height: 120px;
+      }
+
+      .header {
+        flex-direction: column;
+      }
+
+      .last {
+        text-align: left;
+      }
     }
   `]
 })

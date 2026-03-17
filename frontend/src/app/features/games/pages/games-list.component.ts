@@ -25,7 +25,10 @@ import {GameCardComponent} from '../components/game-card.component';
   template: `
     <div class="page">
       <div class="sticky-header">
-        <h1>Board Games</h1>
+        <div class="header-row">
+          <h1>Board Games</h1>
+          <div class="games-count">{{ games.length }} game{{ games.length === 1 ? '' : 's' }}</div>
+        </div>
 
         <div class="quick-filters">
           <button type="button" (click)="setPlayers(2, 2)">2p</button>
@@ -91,9 +94,23 @@ import {GameCardComponent} from '../components/game-card.component';
       margin-bottom: 14px;
     }
 
-    .sticky-header h1 {
-      margin-top: 0;
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 12px;
+    }
+
+    .sticky-header h1 {
+      margin: 0;
+    }
+
+    .games-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
     }
 
     .quick-filters {

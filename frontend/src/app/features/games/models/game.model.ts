@@ -1,6 +1,7 @@
 export interface Expansion {
   bggId: number;
   name: string;
+  imageUrl: string | null;
   ratingBgg: number;
   ratingPersonal: number | null;
   playingTimeMin: number;
@@ -17,6 +18,7 @@ export interface Expansion {
 export interface GameDetail {
   bggId: number;
   name: string;
+  imageUrl: string | null;
   ratingBgg: number;
   ratingPersonal: number | null;
   playingTimeMin: number;

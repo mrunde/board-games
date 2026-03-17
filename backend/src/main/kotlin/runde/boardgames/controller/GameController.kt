@@ -23,12 +23,9 @@ class GameController(
   private val gameService: GameService,
 ) {
   @GetMapping("/{bggId}")
-  fun getGameById(
+  fun getGameByIdWithExpansions(
     @PathVariable bggId: Int,
   ): ResponseEntity<GameDetailDto> = ResponseEntity.ok(gameService.getByIdWithExpansions(bggId))
-
-  @GetMapping("/all")
-  fun getAllGames(): List<GameDto> = gameService.getAll()
 
   @GetMapping
   fun getAllGamesWithExpansions(

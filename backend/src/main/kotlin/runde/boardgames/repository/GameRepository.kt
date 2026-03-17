@@ -13,11 +13,14 @@ import runde.boardgames.dto.GameDto
 import runde.boardgames.entity.Game
 import runde.boardgames.entity.Play
 import runde.boardgames.entity.toGameDto
+import runde.boardgames.util.ImageUrlResolver
 import java.math.BigDecimal
 import java.time.LocalDate
 
 @Repository
-class GameRepository {
+class GameRepository(
+  private val imageUrlResolver: ImageUrlResolver,
+) {
   fun findById(bggId: Int): GameDto? =
     transaction {
       Game
@@ -55,14 +58,6 @@ class GameRepository {
         }
     }
 
-  fun findAll(): List<GameDto> =
-    transaction {
-      Game
-        .selectAll()
-        .orderBy(Game.name to SortOrder.ASC)
-        .map { it.toGameDto() }
-    }
-
   fun findAllWithExpansions(): List<GameDetailDto> =
     transaction {
       val lastPlayed = Play.playedOn.max()
@@ -89,6 +84,7 @@ class GameRepository {
           expansionsWithLastPlayed =
             (byMainId[mainGame.first.bggId].orEmpty())
               .sortedBy { it.first.name },
+          imageUrlResolver = imageUrlResolver,
         )
       }
     }

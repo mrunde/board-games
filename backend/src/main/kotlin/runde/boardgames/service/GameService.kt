@@ -1,18 +1,18 @@
 package runde.boardgames.service
 
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import runde.boardgames.dto.GameDetailDto
 import runde.boardgames.dto.GameDto
 import runde.boardgames.exception.BadRequestException
 import runde.boardgames.exception.NotFoundException
 import runde.boardgames.repository.GameRepository
+import runde.boardgames.util.ImageUrlResolver
 
 @Service
 class GameService(
   private val gameRepository: GameRepository,
+  private val imageUrlResolver: ImageUrlResolver,
 ) {
-  @Transactional(readOnly = true)
   fun getByIdWithExpansions(bggId: Int): GameDetailDto {
     // Get the main game
     val mainGameWithLastPlayed = gameRepository.findByIdWithLastPlayed(bggId)
@@ -22,13 +22,13 @@ class GameService(
     // Get its expansions
     val expansionsWithLastPlayed = gameRepository.findExpansionsWithLastPlayed(bggId)
     // Return the game details
-    return GameDetailDto.fromGameDto(mainGameWithLastPlayed, expansionsWithLastPlayed)
+    return GameDetailDto.fromGameDto(
+      mainGameWithLastPlayed,
+      expansionsWithLastPlayed,
+      imageUrlResolver,
+    )
   }
 
-  @Transactional(readOnly = true)
-  fun getAll(): List<GameDto> = gameRepository.findAll()
-
-  @Transactional(readOnly = true)
   fun getAllWithExpansions(
     minPlayers: Int?,
     maxPlayers: Int?,
@@ -78,13 +78,11 @@ class GameService(
     return sortGames(filtered, sort, dir)
   }
 
-  @Transactional
   fun upsertGame(gameDto: GameDto): GameDto {
     validateMainGameId(gameDto)
     return gameRepository.upsert(gameDto)
   }
 
-  @Transactional
   fun deleteGame(bggId: Int) = gameRepository.deleteById(bggId)
 
   private fun matchesPlayers(
