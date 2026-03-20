@@ -1,30 +1,32 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Location, NgFor, NgIf} from '@angular/common';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Subject, takeUntil} from 'rxjs';
 import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {BoardgamesService} from '../../../core/api/boardgames.service';
-import {GameDetail} from '../models/game.model';
 import {DetailShellComponent} from '../components/detail-shell.component';
+import {GameDetail} from '../models/game.model';
 import {DetailPageUiService} from '../services/detail-page-ui.service';
 
 @Component({
   selector: 'game-detail',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DetailShellComponent],
+  imports: [NgIf, NgFor, RouterLink, DetailShellComponent, TranslatePipe],
   template: `
     <detail-shell
       [loading]="loading"
-      loadingText="Loading game…"
+      [loadingText]="'game.loading' | translate"
       [error]="error"
       [successMessage]="successMessage"
+      [bggId]="game?.bggId"
       [title]="game?.name"
       [imageUrl]="game?.imageUrl"
       [ratingBgg]="game?.ratingBgg"
       [ratingPersonal]="game?.ratingPersonal"
       [playingTimeMin]="game?.playingTimeMin"
       [playingTimeMax]="game?.playingTimeMax"
-      [weight]="game?.weight"
+      [complexity]="game?.complexity"
       [playersMin]="game?.playersMin"
       [playersMax]="game?.playersMax"
       [playersRecMin]="game?.playersRecMin"
@@ -38,10 +40,10 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       (selectedPlayDateChange)="selectedPlayDate = $event"
       (back)="goBack()"
       (today)="setToday()"
-      (play)="recordPlay()"
+      (recordPlay)="recordPlay()"
     >
       <div *ngIf="game?.expansions?.length" class="expansions">
-        <h2>Expansions</h2>
+        <h2>{{ 'common.expansions' | translate }}</h2>
         <div
           class="exp-item"
           *ngFor="let e of game?.expansions"
@@ -99,8 +101,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
 
     .exp-cover.small.placeholder {
       border: 1px dashed #c7c7c7;
-      background:
-        linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
+      background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
       background-size: 12px 12px;
     }
 
@@ -143,8 +144,14 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly api: BoardgamesService,
     private readonly location: Location,
+    private readonly translate: TranslateService,
     public ui: DetailPageUiService
   ) {
+  }
+
+  get selectedPlayDateLabel(): string {
+    return this.ui.toIsoDate(this.selectedPlayDate) ??
+      this.translate.instant('play.today');
   }
 
   ngOnInit(): void {
@@ -164,10 +171,6 @@ export class GameDetailComponent implements OnInit, OnDestroy {
       .subscribe(id => this.load(id));
   }
 
-  get selectedPlayDateLabel(): string {
-    return this.ui.toIsoDate(this.selectedPlayDate) ?? 'today';
-  }
-
   load(id: number): void {
     this.api.getGameById(id).subscribe({
       next: game => {
@@ -175,7 +178,8 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: err => {
-        this.error = err?.error?.error ?? err?.message ?? 'Failed to load game.';
+        this.error = err?.error?.error ?? err?.message
+          ?? this.translate.instant('errors.game');
         this.loading = false;
       }
     });
@@ -200,14 +204,15 @@ export class GameDetailComponent implements OnInit, OnDestroy {
       next: () => {
         this.playSubmitting = false;
         this.successTimeoutId = this.ui.startTimedSuccess(
-          `Play recorded for ${playedOn}.`,
+          this.translate.instant('play.recorded', {playedOn: playedOn}),
           value => this.successMessage = value
         );
         this.load(this.game!.bggId);
       },
       error: err => {
         this.playSubmitting = false;
-        this.playError = err?.error?.error ?? err?.message ?? 'Failed to save play.';
+        this.playError = err?.error?.error ?? err?.message
+          ?? this.translate.instant('errors.play');
       }
     });
   }

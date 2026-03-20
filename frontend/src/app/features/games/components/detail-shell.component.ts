@@ -1,33 +1,50 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgIf} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {MatButton} from "@angular/material/button";
+import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIcon} from "@angular/material/icon";
 import {MatInputModule} from '@angular/material/input';
-import {MatNativeDateModule} from '@angular/material/core';
+import {RouterLink} from '@angular/router';
+import {TranslatePipe} from "@ngx-translate/core";
+import {formatRange} from "../../../shared/utils/range-format.util";
+import {ComplexityIndicatorComponent} from "./indicators/complexity-indicator.component";
+import {LastPlayedIndicatorComponent} from "./indicators/last-played-indicator.component";
+import {RatingIndicatorComponent} from "./indicators/rating-indicator.component";
 
 @Component({
   selector: 'detail-shell',
   standalone: true,
   imports: [
-    NgIf,
-    RouterLink,
     FormsModule,
+    MatButton,
     MatDatepickerModule,
     MatFormFieldModule,
+    MatIcon,
     MatInputModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    NgIf,
+    RouterLink,
+    TranslatePipe,
+    ComplexityIndicatorComponent,
+    LastPlayedIndicatorComponent,
+    RatingIndicatorComponent
   ],
   template: `
     <div class="page">
       <div class="nav-actions">
-        <button class="nav-btn" type="button" (click)="back.emit()">← Back</button>
-        <a class="nav-btn home-btn" routerLink="/">⌂ Home</a>
+        <button class="nav-btn" type="button" (click)="back.emit()">
+          {{ 'navigation.back' | translate }}
+        </button>
+        <a class="nav-btn home-btn" routerLink="/">
+          {{ 'navigation.home' | translate }}
+        </a>
       </div>
 
       <div *ngIf="loading" class="info-card">
-        {{ loadingText }}
+        {{ loadingText || 'common.loading' | translate }}
       </div>
 
       <div *ngIf="error" class="error-card">
@@ -39,49 +56,114 @@ import {MatNativeDateModule} from '@angular/material/core';
       </div>
 
       <div class="card" *ngIf="!loading && !error && title" [class.recent]="recent">
-        <div class="media" *ngIf="imageUrl; else placeholder">
-          <img class="cover" [src]="imageUrl!" [alt]="title">
+        <div class="media" *ngIf="imageUrl">
+          <img
+            class="cover clickable"
+            [src]="imageUrl!"
+            (click)="openImagePreview()"
+            (error)="imageUrl = null"
+            [alt]="title"
+          >
         </div>
-
-        <ng-template #placeholder>
-          <div class="cover placeholder"></div>
-        </ng-template>
 
         <h1>{{ title }}</h1>
 
         <div *ngIf="mainGameName && mainGameLink" class="main-game-link">
-          Main game:
+          {{ 'expansion.mainGame' | translate }}:
           <a [routerLink]="mainGameLink">{{ mainGameName }}</a>
         </div>
 
         <div class="meta">
-          Players {{ playersMin }}–{{ playersMax }}
-          · Recommended {{ playersRecMin }}–{{ playersRecMax }}
-          · Time {{ playingTimeMin }}–{{ playingTimeMax }} min
+          <span class="meta-item">
+            <mat-icon class="meta-icon">group</mat-icon>
+            {{ playersText }} {{ 'game.players' | translate }}
+            ({{ 'game.playersRecommended' | translate }}: {{ playersRecText }})
+          </span>
+          ·
+          <span class="meta-item">
+            <mat-icon class="meta-icon">schedule</mat-icon>
+            {{ playingTimeText }} {{ 'game.time' | translate }}
+          </span>
         </div>
 
         <div class="stats">
-          <div>BGG {{ ratingBgg }}</div>
-          <div>You {{ ratingPersonal ?? '—' }}</div>
-          <div>Weight {{ weight }}</div>
-          <div>Last played {{ lastPlayed || '—' }}</div>
+          <rating-indicator
+            [value]="ratingBgg"
+            label="BGG"
+            [isBgg]="true"
+            [bggUrl]="bggUrl"
+          ></rating-indicator>
+
+          <rating-indicator
+            [value]="ratingPersonal"
+            [label]="'game.ratingPersonal' | translate"
+          ></rating-indicator>
+
+          <complexity-indicator [complexity]="complexity"></complexity-indicator>
+
+          <last-played-indicator [lastPlayed]="lastPlayed"></last-played-indicator>
         </div>
 
         <div class="play-picker">
-          <mat-form-field appearance="outline">
-            <mat-label>Play date</mat-label>
+          <mat-form-field
+            appearance="outline"
+            class="play-date-field"
+            subscriptSizing="dynamic"
+          >
+            <mat-label>
+              {{ 'play.date' | translate }}
+            </mat-label>
+
             <input
               matInput
               [matDatepicker]="picker"
               [ngModel]="selectedPlayDate"
-              (ngModelChange)="selectedPlayDateChange.emit($event)">
+              (ngModelChange)="selectedPlayDateChange.emit($event)"
+            >
+
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+
+            <mat-datepicker #picker>
+              <mat-datepicker-actions>
+                <button
+                  mat-button
+                  type="button"
+                  matDatepickerCancel
+                >
+                  {{ 'common.cancel' | translate }}
+                </button>
+
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="today-inside-picker-btn"
+                  (click)="today.emit(); picker.close()"
+                >
+                  {{ 'play.today' | translate }}
+                </button>
+
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  matDatepickerApply
+                >
+                  {{ 'common.apply' | translate }}
+                </button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
           </mat-form-field>
 
-          <button type="button" class="today-btn" (click)="today.emit()">Today</button>
-          <button type="button" class="play-btn" (click)="play.emit()" [disabled]="playSubmitting">
-            {{ playSubmitting ? 'Saving…' : 'Played on ' + playDateLabel }}
+          <button
+            type="button"
+            class="play-btn"
+            (click)="recordPlay.emit()"
+            [disabled]="playSubmitting"
+          >
+            {{
+              playSubmitting ? 'play.saving' : 'play.playedOn'
+                | translate:{playedOn: playDateLabel}
+            }}
           </button>
         </div>
 
@@ -90,6 +172,26 @@ import {MatNativeDateModule} from '@angular/material/core';
         </div>
 
         <ng-content></ng-content>
+      </div>
+
+      <div
+        *ngIf="imagePreviewOpen && imageUrl"
+        class="image-overlay"
+        (click)="closeImagePreview()"
+      >
+        <img
+          class="image-preview"
+          [src]="imageUrl!"
+          [alt]="title"
+          (click)="$event.stopPropagation()"
+        >
+        <button
+          type="button"
+          class="close-preview-btn"
+          (click)="closeImagePreview(); $event.stopPropagation()"
+        >
+          ×
+        </button>
       </div>
     </div>
   `,
@@ -156,7 +258,7 @@ import {MatNativeDateModule} from '@angular/material/core';
 
     .media {
       width: 100%;
-      height: 220px;
+      height: 240px;
       margin-bottom: 12px;
     }
 
@@ -168,10 +270,40 @@ import {MatNativeDateModule} from '@angular/material/core';
       background: #eee;
     }
 
-    .placeholder {
-      border: 1px dashed #c7c7c7;
-      background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
-      background-size: 20px 20px;
+    .clickable {
+      cursor: zoom-in;
+    }
+
+    .image-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 1000;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #111;
+    }
+
+    .close-preview-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 999px;
+      background: white;
+      cursor: pointer;
+      font-size: 24px;
     }
 
     .main-game-link {
@@ -190,43 +322,77 @@ import {MatNativeDateModule} from '@angular/material/core';
       margin: 8px 0 12px;
     }
 
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-icon {
+      font-size: 1em;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
     .stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
       margin-bottom: 14px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    /* Mobile: 2x2 layout */
+    @media (max-width: 600px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .play-picker {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      align-items: flex-end;
+      gap: 12px;
       margin-bottom: 14px;
       flex-wrap: wrap;
     }
 
-    .play-picker mat-form-field {
-      flex: 1 1 240px;
-    }
-
-    .today-btn,
-    .play-btn {
-      border: 1px solid #ccc;
-      background: white;
-      border-radius: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
+    .play-picker mat-form-field,
+    .play-date-field {
+      flex: 1 1 260px;
+      min-width: 220px;
     }
 
     .play-btn {
+      height: 56px;
+      box-sizing: border-box;
+      border: 1px solid #1976d2;
       background: #1976d2;
-      border-color: #1976d2;
+      border-radius: 10px;
+      padding: 0 16px;
+      cursor: pointer;
       color: white;
+      font-weight: 600;
+      white-space: nowrap;
+      align-self: flex-end;
     }
 
     .play-btn:disabled {
       opacity: 0.7;
       cursor: default;
+    }
+
+    @media (max-width: 600px) {
+      .play-picker {
+        align-items: stretch;
+      }
+
+      .play-btn {
+        width: 100%;
+      }
     }
 
     .error-inline {
@@ -236,17 +402,18 @@ import {MatNativeDateModule} from '@angular/material/core';
 })
 export class DetailShellComponent {
   @Input() loading = false;
-  @Input() loadingText = 'Loading…';
+  @Input() loadingText: string | null = null;
   @Input() error: string | null = null;
   @Input() successMessage: string | null = null;
 
+  @Input() bggId?: number;
   @Input() title?: string;
   @Input() imageUrl?: string | null;
   @Input() ratingBgg?: number;
   @Input() ratingPersonal?: number | null;
   @Input() playingTimeMin?: number;
   @Input() playingTimeMax?: number;
-  @Input() weight?: number;
+  @Input() complexity?: number;
   @Input() playersMin?: number;
   @Input() playersMax?: number;
   @Input() playersRecMin?: number;
@@ -264,6 +431,38 @@ export class DetailShellComponent {
 
   @Output() back = new EventEmitter<void>();
   @Output() today = new EventEmitter<void>();
-  @Output() play = new EventEmitter<void>();
+  @Output() recordPlay = new EventEmitter<void>();
   @Output() selectedPlayDateChange = new EventEmitter<Date | null>();
+
+  imagePreviewOpen = false;
+
+  get bggUrl(): string {
+    if (this.mainGameName == null) {
+      return "https://boardgamegeek.com/boardgame/" + this.bggId;
+    } else {
+      return "https://boardgamegeek.com/boardgameexpansion/" + this.bggId;
+    }
+  }
+
+  get playersText(): string {
+    return formatRange(this.playersMin, this.playersMax);
+  }
+
+  get playersRecText(): string {
+    return formatRange(this.playersRecMin, this.playersRecMax);
+  }
+
+  get playingTimeText(): string {
+    return formatRange(this.playingTimeMin, this.playingTimeMax, ' min');
+  }
+
+  openImagePreview(): void {
+    if (this.imageUrl) {
+      this.imagePreviewOpen = true;
+    }
+  }
+
+  closeImagePreview(): void {
+    this.imagePreviewOpen = false;
+  }
 }

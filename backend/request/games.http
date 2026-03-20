@@ -5,7 +5,7 @@ GET http://localhost:8080/board-games/api/games/173346
 GET http://localhost:8080/board-games/api/games
 
 ### GET all games with expansions with filters and sorting
-GET http://localhost:8080/board-games/api/games?minPlayers=2&maxPlayers=2&sort=ratingPersonal&dir=desc
+GET http://localhost:8080/board-games/api/games?players=2&sort=ratingPersonal&dir=desc
 
 ### POST add game
 POST http://localhost:8080/board-games/api/games
@@ -18,7 +18,7 @@ Content-Type: application/json
   "ratingPersonal": null,
   "playingTimeMin": 30,
   "playingTimeMax": 60,
-  "weight": 2.5,
+  "complexity": 2.5,
   "playersMin": 1,
   "playersMax": 4,
   "playersRecMin": 2,
@@ -36,7 +36,7 @@ Content-Type: application/json
   "ratingPersonal": 2,
   "playingTimeMin": 30,
   "playingTimeMax": 60,
-  "weight": 2.5,
+  "complexity": 2.5,
   "playersMin": 1,
   "playersMax": 4,
   "playersRecMin": 2,

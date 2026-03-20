@@ -1,0 +1,60 @@
+{
+  "common": {
+    "all": "All",
+    "expansions": "Expansions",
+    "noImage": "No image",
+    "recommended": "★ Recommended",
+    "loading": "Loading…",
+    "apply": "Apply",
+    "cancel": "Cancel"
+  },
+  "games": {
+    "title": "Board Games",
+    "noResults": "No games found.",
+    "sortAscending": "Ascending",
+    "sortDescending": "Descending",
+    "count_one": "1 game",
+    "count_other": "{{count}} games"
+  },
+  "game": {
+    "name": "Name",
+    "players": "Players",
+    "playersRecommended": "Recommended",
+    "ratingBgg": "BGG rating",
+    "ratingPersonal": "Personal Rating",
+    "complexity": "Complexity",
+    "time": "Playing Time",
+    "loading": "Loading game…"
+  },
+  "expansion": {
+    "mainGame": "Hauptspiel",
+    "loading": "Loading expansion…"
+  },
+  "play": {
+    "lastPlayed": "Last played",
+    "today": "Today",
+    "date": "Date",
+    "saving": "Saving…",
+    "recorded": "Play recorded for {{playedOn}}.",
+    "playedOn": "Played on {{playedOn}}",
+    "playedAgo": "{{count}} {{dateUnit}} ago",
+    "day": "day",
+    "days": "days",
+    "week": "week",
+    "weeks": "weeks",
+    "month": "month",
+    "months": "months",
+    "year": "year",
+    "years": "years"
+  },
+  "navigation": {
+    "home": "⌂ Home",
+    "back": "← Back"
+  },
+  "errors": {
+    "game": "Failed to load game.",
+    "mainGame": "Failed to load main game.",
+    "expansion": "Failed to load expansion.",
+    "play": "Failed to save play."
+  }
+}

@@ -33,7 +33,7 @@ data class GameDto(
   @field:NotNull
   @field:DecimalMin("1.00")
   @field:DecimalMax("9.99")
-  val weight: Double,
+  val complexity: Double,
   @field:NotNull
   @field:Min(1)
   val playersMin: Int,

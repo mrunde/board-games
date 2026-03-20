@@ -1,12 +1,15 @@
-import {Component, Input} from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
+import {Component, Input} from '@angular/core';
+import {MatIcon} from "@angular/material/icon";
 import {RouterLink} from '@angular/router';
+import {TranslatePipe} from "@ngx-translate/core";
+import {formatRange} from "../../../shared/utils/range-format.util";
 import {GameDetail} from '../models/game.model';
 
 @Component({
   selector: 'game-card',
   standalone: true,
-  imports: [NgFor, NgIf, RouterLink],
+  imports: [NgFor, NgIf, RouterLink, TranslatePipe, MatIcon],
   template: `
     <div
       class="card"
@@ -14,7 +17,7 @@ import {GameDetail} from '../models/game.model';
       [class.recommended]="isRecommendedMatch()"
     >
       <div class="media">
-        <ng-container *ngIf="game.imageUrl; else placeholder">
+        <ng-container *ngIf="game.imageUrl != null; else placeholder">
           <img
             class="cover"
             [src]="game.imageUrl!"
@@ -25,8 +28,8 @@ import {GameDetail} from '../models/game.model';
         </ng-container>
 
         <ng-template #placeholder>
-          <div class="cover placeholder" aria-label="No image available">
-            <span>No image</span>
+          <div class="cover placeholder">
+            <span>{{ 'common.noImage' | translate }}</span>
           </div>
         </ng-template>
       </div>
@@ -37,31 +40,39 @@ import {GameDetail} from '../models/game.model';
             <a class="title" [routerLink]="['/games', game.bggId]">{{ game.name }}</a>
 
             <span *ngIf="isRecommendedMatch()" class="recommended-badge">
-              ★ Recommended
+              {{ 'common.recommended' | translate }}
             </span>
           </div>
 
           <div class="last">
-            Last played
+            {{ 'play.lastPlayed' | translate }}
             <div class="value">{{ game.lastPlayed || '—' }}</div>
           </div>
         </div>
 
         <div class="meta">
-          Players {{ game.playersMin }}–{{ game.playersMax }}
-          · Time {{ game.playingTimeMin }}–{{ game.playingTimeMax }} min
+          <span class="meta-item">
+            <mat-icon class="meta-icon">group</mat-icon>
+            {{ playersText }} {{ 'game.players' | translate }}
+            ({{ 'game.playersRecommended' | translate }}: {{ playersRecText }})
+          </span>
+          ·
+          <span class="meta-item">
+            <mat-icon class="meta-icon">schedule</mat-icon>
+            {{ playingTimeText }} {{ 'game.time' | translate }}
+          </span>
         </div>
 
         <div class="stats">
-          <div>BGG {{ game.ratingBgg }}</div>
-          <div>You {{ game.ratingPersonal ?? '—' }}</div>
-          <div>Weight {{ game.weight }}</div>
+          <div>BGG: <b>{{ game.ratingBgg }}</b></div>
+          <div>{{ 'game.ratingPersonal' | translate }} <b>{{ game.ratingPersonal ?? '—' }}</b></div>
+          <div>{{ 'game.complexity' | translate }}: <b>{{ game.complexity }}</b> / 5</div>
         </div>
       </div>
 
       <div *ngIf="game.expansions?.length" class="exp">
         <div class="exp-title">
-          Expansions ({{ game.expansions.length }})
+          {{ 'common.expansions' | translate }} ({{ game.expansions.length }})
         </div>
 
         <div
@@ -170,7 +181,7 @@ import {GameDetail} from '../models/game.model';
 
     .recommended-badge {
       display: inline-block;
-      margin-top: 6px;
+      margin-left: 6px;
       font-size: 12px;
       font-weight: 600;
       color: #8a5a00;
@@ -191,8 +202,22 @@ import {GameDetail} from '../models/game.model';
 
     .meta {
       font-size: 13px;
-      opacity: 0.7;
+      opacity: 0.75;
       margin-top: 4px;
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-icon {
+      font-size: 1em;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+      vertical-align: middle;
     }
 
     .stats {
@@ -285,8 +310,19 @@ import {GameDetail} from '../models/game.model';
 })
 export class GameCardComponent {
   @Input() game!: GameDetail;
-  @Input() filterMinPlayers?: number;
-  @Input() filterMaxPlayers?: number;
+  @Input() filterPlayers?: number;
+
+  get playersText(): string {
+    return formatRange(this.game.playersMin, this.game.playersMax);
+  }
+
+  get playersRecText(): string {
+    return formatRange(this.game.playersRecMin, this.game.playersRecMax);
+  }
+
+  get playingTimeText(): string {
+    return formatRange(this.game.playingTimeMin, this.game.playingTimeMax, ' min');
+  }
 
   isRecentlyPlayed(value: string | null): boolean {
     if (!value) return false;
@@ -298,16 +334,9 @@ export class GameCardComponent {
   }
 
   isRecommendedMatch(): boolean {
-    if (this.filterMinPlayers == null && this.filterMaxPlayers == null) {
-      return false;
-    }
-
-    const min = this.filterMinPlayers ?? this.filterMaxPlayers!;
-    const max = this.filterMaxPlayers ?? this.filterMinPlayers!;
-
-    return (
-      this.game.playersRecMin <= max &&
-      this.game.playersRecMax >= min
+    return this.filterPlayers != null && (
+      this.game.playersRecMin <= this.filterPlayers &&
+      this.game.playersRecMax >= this.filterPlayers
     );
   }
 }

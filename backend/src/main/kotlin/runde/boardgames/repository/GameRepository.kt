@@ -98,7 +98,7 @@ class GameRepository(
         it[ratingPersonal] = game.ratingPersonal
         it[playingTimeMin] = game.playingTimeMin
         it[playingTimeMax] = game.playingTimeMax
-        it[weight] = BigDecimal.valueOf(game.weight)
+        it[complexity] = BigDecimal.valueOf(game.complexity)
         it[playersMin] = game.playersMin
         it[playersMax] = game.playersMax
         it[playersRecMin] = game.playersRecMin

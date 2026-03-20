@@ -1,5 +1,5 @@
 INSERT INTO game (bgg_id, name, rating_bgg, rating_personal, playing_time_min, playing_time_max,
-                  weight, players_min, players_max, players_rec_min, players_rec_max, main_game_id)
+                  complexity, players_min, players_max, players_rec_min, players_rec_max, main_game_id)
 VALUES (432, '6 nimmt!', 7.0, 8, 45, 45, 1.19, 2, 10, 5, 6, null),
        (173346, '7 Wonders Duel', 8.1, 8, 30, 30, 2.23, 2, 2, 2, 2, null),
        (202976, '7 Wonders Duel: Pantheon', 8.0, 8, 30, 30, 2.32, 2, 2, 2, 2, 173346),

@@ -1,15 +1,24 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { routes } from './app.routes';
 import {DatePipe} from "@angular/common";
+import {provideHttpClient} from '@angular/common/http';
+import {ApplicationConfig} from '@angular/core';
+import {provideAnimations} from '@angular/platform-browser/animations';
+import {provideRouter} from '@angular/router';
+import {provideTranslateService} from "@ngx-translate/core";
+import {provideTranslateHttpLoader} from "@ngx-translate/http-loader";
+import {routes} from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
     provideAnimations(),
+    provideTranslateService({
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({
+        prefix: '/assets/i18n/',
+        suffix: '.json'
+      })
+    }),
     DatePipe
   ]
 };

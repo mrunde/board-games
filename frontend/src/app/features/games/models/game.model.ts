@@ -6,7 +6,7 @@ export interface Expansion {
   ratingPersonal: number | null;
   playingTimeMin: number;
   playingTimeMax: number;
-  weight: number;
+  complexity: number;
   playersMin: number;
   playersMax: number;
   playersRecMin: number;
@@ -23,7 +23,7 @@ export interface GameDetail {
   ratingPersonal: number | null;
   playingTimeMin: number;
   playingTimeMax: number;
-  weight: number;
+  complexity: number;
   playersMin: number;
   playersMax: number;
   playersRecMin: number;

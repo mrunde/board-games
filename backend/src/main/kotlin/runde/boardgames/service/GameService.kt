@@ -30,19 +30,12 @@ class GameService(
   }
 
   fun getAllWithExpansions(
-    minPlayers: Int?,
-    maxPlayers: Int?,
+    players: Int?,
     sort: String,
     dir: String,
   ): List<GameDetailDto> {
-    if (minPlayers != null && minPlayers < 1) {
-      throw BadRequestException("minPlayers must be greater or equal 1")
-    }
-    if (maxPlayers != null && maxPlayers < 1) {
-      throw BadRequestException("maxPlayers must be greater or equal 1")
-    }
-    if (minPlayers != null && maxPlayers != null && minPlayers > maxPlayers) {
-      throw BadRequestException("maxPlayers must be greater than minPlayers")
+    if (players != null && players < 1) {
+      throw BadRequestException("Players must be greater or equal 1")
     }
 
     val games = gameRepository.findAllWithExpansions()
@@ -56,15 +49,14 @@ class GameService(
             matchesPlayers(
               game.playersMin,
               game.playersMax,
-              minPlayers,
-              maxPlayers,
+              players,
             )
 
           // Filter the expansions
           val matchingExpansions =
             game.expansions
               .filter { expansion ->
-                matchesPlayers(expansion.playersMin, expansion.playersMax, minPlayers, maxPlayers)
+                matchesPlayers(expansion.playersMin, expansion.playersMax, players)
               }
 
           when {
@@ -88,17 +80,8 @@ class GameService(
   private fun matchesPlayers(
     gameMin: Int,
     gameMax: Int,
-    minPlayers: Int?,
-    maxPlayers: Int?,
-  ): Boolean {
-    if (minPlayers != null && (gameMin > minPlayers || gameMax < minPlayers)) {
-      return false
-    }
-    if (maxPlayers != null && (gameMin > maxPlayers || gameMax < maxPlayers)) {
-      return false
-    }
-    return true
-  }
+    players: Int?,
+  ): Boolean = !(players != null && (gameMin > players || gameMax < players))
 
   private fun sortGames(
     items: List<GameDetailDto>,
@@ -115,10 +98,10 @@ class GameService(
 
         "ratingpersonal" -> compareBy { it.ratingPersonal }
 
-        "weight" -> compareBy { it.weight }
+        "complexity" -> compareBy { it.complexity }
 
         else -> throw BadRequestException(
-          "Unsupported sort=$sort. Use name, lastPlayed, ratingBgg, ratingPersonal, weight.",
+          "Unsupported sort=$sort. Use name, lastPlayed, ratingBgg, ratingPersonal, complexity.",
         )
       }
 

@@ -15,7 +15,7 @@ object Game : Table("board_games.game") {
   val playingTimeMin = integer("playing_time_min")
   val playingTimeMax = integer("playing_time_max")
 
-  val weight = decimal("weight", 3, 2)
+  val complexity = decimal("complexity", 3, 2)
 
   val playersMin = integer("players_min")
   val playersMax = integer("players_max")
@@ -35,7 +35,7 @@ fun ResultRow.toGameDto(): GameDto =
     ratingPersonal = this[Game.ratingPersonal],
     playingTimeMin = this[Game.playingTimeMin],
     playingTimeMax = this[Game.playingTimeMax],
-    weight = this[Game.weight].toDouble(),
+    complexity = this[Game.complexity].toDouble(),
     playersMin = this[Game.playersMin],
     playersMax = this[Game.playersMax],
     playersRecMin = this[Game.playersRecMin],

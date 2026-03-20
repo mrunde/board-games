@@ -29,14 +29,12 @@ class GameController(
 
   @GetMapping
   fun getAllGamesWithExpansions(
-    @RequestParam(required = false) minPlayers: Int?,
-    @RequestParam(required = false) maxPlayers: Int?,
+    @RequestParam(required = false) players: Int?,
     @RequestParam(required = false, defaultValue = "name") sort: String,
     @RequestParam(required = false, defaultValue = "asc") dir: String,
   ): List<GameDetailDto> =
     gameService.getAllWithExpansions(
-      minPlayers = minPlayers,
-      maxPlayers = maxPlayers,
+      players = players,
       sort = sort,
       dir = dir,
     )

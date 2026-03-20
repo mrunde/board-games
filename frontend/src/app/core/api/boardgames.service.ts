@@ -1,8 +1,8 @@
-import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Expansion, GameDetail} from '../../features/games/models/game.model';
 import {environment} from '../../../environments/environment';
+import {Expansion, GameDetail} from '../../features/games/models/game.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,7 @@ export class BoardgamesService {
   private readonly http = inject(HttpClient);
 
   getGames(
-    minPlayers?: number,
-    maxPlayers?: number,
+    players?: number,
     sort: string = 'name',
     dir: string = 'asc'
   ): Observable<GameDetail[]> {
@@ -20,8 +19,7 @@ export class BoardgamesService {
       .set('sort', sort)
       .set('dir', dir);
 
-    if (minPlayers != null) params = params.set('minPlayers', minPlayers);
-    if (maxPlayers != null) params = params.set('maxPlayers', maxPlayers);
+    if (players != null) params = params.set('players', players);
 
     return this.http.get<GameDetail[]>(`${environment.apiBase}/games`, {params});
   }

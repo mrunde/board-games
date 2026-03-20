@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-root',
@@ -8,4 +9,15 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly translate = inject(TranslateService);
+
+  constructor() {
+    const saved = localStorage.getItem('lang');
+    const browser = this.translate.getBrowserLang();
+    const lang = saved || (browser === 'de' ? 'de' : 'en');
+
+    this.translate.addLangs(['de', 'en']);
+    this.translate.use(lang);
+  }
+}

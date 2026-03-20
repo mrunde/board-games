@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS game
   rating_personal  INTEGER       NULL,
   playing_time_min INTEGER       NOT NULL,
   playing_time_max INTEGER       NOT NULL,
-  weight           NUMERIC(3, 2) NOT NULL,
+  complexity       NUMERIC(3, 2) NOT NULL,
   players_min      INTEGER       NOT NULL,
   players_max      INTEGER       NOT NULL,
   players_rec_min  INTEGER       NOT NULL,
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS game
       (rating_personal IS NULL OR (rating_personal >= 1 AND rating_personal <= 10))
       ),
 
-  CONSTRAINT chk_weight
-    CHECK (weight >= 1 AND weight <= 5)
+  CONSTRAINT chk_complexity
+    CHECK (complexity >= 1 AND complexity <= 5)
 );
 
 -- PLAY table
