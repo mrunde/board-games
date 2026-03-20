@@ -48,8 +48,8 @@
     "years": "years"
   },
   "navigation": {
-    "home": "⌂ Home",
-    "back": "← Back"
+    "home": "Home",
+    "back": "Back"
   },
   "errors": {
     "game": "Failed to load game.",

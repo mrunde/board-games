@@ -41,22 +41,19 @@ import {GameDetail} from '../models/game.model';
         <div class="header-row">
           <h1>{{ 'games.title' | translate }}</h1>
 
-          <div class="header-actions">
-            <div class="games-count">
-              {{
-                (games.length === 1 ? 'games.count_one' : 'games.count_other')
-                  | translate:{count: games.length}
-              }}
-            </div>
-
-            <app-language-switcher></app-language-switcher>
-          </div>
+          <app-language-switcher></app-language-switcher>
         </div>
 
         <div class="quick-filters">
-          <button type="button" (click)="setPlayers(2)" [class.active]="players === 2">2p</button>
-          <button type="button" (click)="setPlayers(3)" [class.active]="players === 3">3p</button>
-          <button type="button" (click)="setPlayers(4)" [class.active]="players === 4">4p</button>
+          <button type="button" (click)="setPlayers(2)" [class.active]="players === 2">
+            2 <mat-icon>group</mat-icon>
+          </button>
+          <button type="button" (click)="setPlayers(3)" [class.active]="players === 3">
+            3 <mat-icon>group</mat-icon>
+          </button>
+          <button type="button" (click)="setPlayers(4)" [class.active]="players === 4">
+            4 <mat-icon>group</mat-icon>
+          </button>
           <button type="button" (click)="clearPlayers()" [class.active]="players == null">
             {{ 'common.all' | translate }}
           </button>
@@ -88,6 +85,13 @@ import {GameDetail} from '../models/game.model';
               {{ dir === 'asc' ? 'north' : 'south' }}
             </mat-icon>
           </button>
+
+          <div class="games-count">
+            {{
+              (games.length === 1 ? 'games.count_one' : 'games.count_other')
+                | translate:{count: games.length}
+            }}
+          </div>
         </div>
       </div>
 
@@ -129,12 +133,11 @@ import {GameDetail} from '../models/game.model';
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      margin-bottom: 12px;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    app-language-switcher {
+      justify-self: end;
     }
 
     .sticky-header h1 {
@@ -176,6 +179,14 @@ import {GameDetail} from '../models/game.model';
       gap: 10px;
       margin-bottom: 14px;
       align-items: center;
+    }
+
+    .quick-filters mat-icon {
+      font-size: 1em;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+      vertical-align: middle;
     }
 
     .list {

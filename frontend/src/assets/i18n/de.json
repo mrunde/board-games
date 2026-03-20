@@ -9,7 +9,7 @@
     "cancel": "Abbrechen"
   },
   "games": {
-    "title": "Brettspiel",
+    "title": "Brettspiele",
     "noResults": "Keine Spiele gefunden.",
     "sortAscending": "Aufsteigend",
     "sortDescending": "Absteigend",
@@ -48,8 +48,8 @@
     "years": "Jahren"
   },
   "navigation": {
-    "home": "⌂ Home",
-    "back": "← Zurück"
+    "home": "Home",
+    "back": "Zurück"
   },
   "errors": {
     "game": "Fehler beim Laden des Spiels.",

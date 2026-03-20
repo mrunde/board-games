@@ -10,9 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
 import {formatRange} from "../../../shared/utils/range-format.util";
-import {ComplexityIndicatorComponent} from "./indicators/complexity-indicator.component";
-import {LastPlayedIndicatorComponent} from "./indicators/last-played-indicator.component";
-import {RatingIndicatorComponent} from "./indicators/rating-indicator.component";
+import {GameIndicatorsComponent} from "./game-indicators.component";
+import {LanguageSwitcherComponent} from "./language-switcher.component";
 
 @Component({
   selector: 'detail-shell',
@@ -28,19 +27,23 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
     NgIf,
     RouterLink,
     TranslatePipe,
-    ComplexityIndicatorComponent,
-    LastPlayedIndicatorComponent,
-    RatingIndicatorComponent
+    GameIndicatorsComponent,
+    LanguageSwitcherComponent
   ],
   template: `
     <div class="page">
       <div class="nav-actions">
         <button class="nav-btn" type="button" (click)="back.emit()">
+          <mat-icon>arrow_back</mat-icon>
           {{ 'navigation.back' | translate }}
         </button>
+
         <a class="nav-btn home-btn" routerLink="/">
+          <mat-icon>home</mat-icon>
           {{ 'navigation.home' | translate }}
         </a>
+
+        <app-language-switcher></app-language-switcher>
       </div>
 
       <div *ngIf="loading" class="info-card">
@@ -79,30 +82,21 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
             {{ playersText }} {{ 'game.players' | translate }}
             ({{ 'game.playersRecommended' | translate }}: {{ playersRecText }})
           </span>
-          ·
+
           <span class="meta-item">
             <mat-icon class="meta-icon">schedule</mat-icon>
             {{ playingTimeText }} {{ 'game.time' | translate }}
           </span>
         </div>
 
-        <div class="stats">
-          <rating-indicator
-            [value]="ratingBgg"
-            label="BGG"
-            [isBgg]="true"
-            [bggUrl]="bggUrl"
-          ></rating-indicator>
-
-          <rating-indicator
-            [value]="ratingPersonal"
-            [label]="'game.ratingPersonal' | translate"
-          ></rating-indicator>
-
-          <complexity-indicator [complexity]="complexity"></complexity-indicator>
-
-          <last-played-indicator [lastPlayed]="lastPlayed"></last-played-indicator>
-        </div>
+        <game-indicators
+          [bggId]="bggId"
+          [ratingBgg]="ratingBgg"
+          [ratingPersonal]="ratingPersonal"
+          [complexity]="complexity"
+          [lastPlayed]="lastPlayed"
+          [mainGameName]="mainGameName"
+        ></game-indicators>
 
         <div class="play-picker">
           <mat-form-field
@@ -203,9 +197,23 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
     }
 
     .nav-actions {
-      display: flex;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding-top: 8px;
       margin-bottom: 12px;
+    }
+
+    .nav-actions > *:first-child {
+      justify-self: start;
+    }
+
+    .home-btn {
+      justify-self: center;
+    }
+
+    app-language-switcher {
+      justify-self: end;
     }
 
     .nav-btn {
@@ -221,8 +229,8 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
       align-items: center;
     }
 
-    .home-btn {
-      font-weight: 500;
+    .nav-btn mat-icon {
+      margin-right: 5px;
     }
 
     .info-card,
@@ -326,6 +334,7 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      margin-right: 10px;
     }
 
     .meta-icon {
@@ -334,22 +343,6 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
       height: 1em;
       line-height: 1;
       vertical-align: middle;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 14px;
-      align-items: center;
-      justify-items: center;
-    }
-
-    /* Mobile: 2x2 layout */
-    @media (max-width: 600px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
     }
 
     .play-picker {
@@ -435,14 +428,6 @@ export class DetailShellComponent {
   @Output() selectedPlayDateChange = new EventEmitter<Date | null>();
 
   imagePreviewOpen = false;
-
-  get bggUrl(): string {
-    if (this.mainGameName == null) {
-      return "https://boardgamegeek.com/boardgame/" + this.bggId;
-    } else {
-      return "https://boardgamegeek.com/boardgameexpansion/" + this.bggId;
-    }
-  }
 
   get playersText(): string {
     return formatRange(this.playersMin, this.playersMax);

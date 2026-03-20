@@ -56,7 +56,7 @@ import {GameDetail} from '../models/game.model';
             {{ playersText }} {{ 'game.players' | translate }}
             ({{ 'game.playersRecommended' | translate }}: {{ playersRecText }})
           </span>
-          ·
+
           <span class="meta-item">
             <mat-icon class="meta-icon">schedule</mat-icon>
             {{ playingTimeText }} {{ 'game.time' | translate }}
@@ -210,6 +210,7 @@ import {GameDetail} from '../models/game.model';
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      margin-right: 10px;
     }
 
     .meta-icon {
