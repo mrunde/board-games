@@ -144,13 +144,6 @@ import {GameDetail} from '../models/game.model';
       margin: 0;
     }
 
-    .games-count {
-      font-size: 14px;
-      font-weight: 600;
-      color: #555;
-      white-space: nowrap;
-    }
-
     .quick-filters {
       display: flex;
       gap: 8px;
@@ -187,6 +180,13 @@ import {GameDetail} from '../models/game.model';
       height: 1em;
       line-height: 1;
       vertical-align: middle;
+    }
+
+    .games-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
     }
 
     .list {

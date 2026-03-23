@@ -90,12 +90,12 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
         </div>
 
         <game-indicators
-          [bggId]="bggId"
+          [bggId]="bggId!!"
+          [isExpansion]="mainGameName != null"
           [ratingBgg]="ratingBgg"
           [ratingPersonal]="ratingPersonal"
           [complexity]="complexity"
           [lastPlayed]="lastPlayed"
-          [mainGameName]="mainGameName"
         ></game-indicators>
 
         <div class="play-picker">

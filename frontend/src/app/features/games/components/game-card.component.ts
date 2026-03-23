@@ -3,13 +3,22 @@ import {Component, Input} from '@angular/core';
 import {MatIcon} from "@angular/material/icon";
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
+import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
 import {formatRange} from "../../../shared/utils/range-format.util";
 import {GameDetail} from '../models/game.model';
+import {GameIndicatorsComponent} from "./game-indicators.component";
 
 @Component({
   selector: 'game-card',
   standalone: true,
-  imports: [NgFor, NgIf, RouterLink, TranslatePipe, MatIcon],
+  imports: [
+    MatIcon,
+    NgFor,
+    NgIf,
+    RouterLink,
+    TranslatePipe,
+    GameIndicatorsComponent
+  ],
   template: `
     <div
       class="card"
@@ -43,11 +52,6 @@ import {GameDetail} from '../models/game.model';
               {{ 'common.recommended' | translate }}
             </span>
           </div>
-
-          <div class="last">
-            {{ 'play.lastPlayed' | translate }}
-            <div class="value">{{ game.lastPlayed || '—' }}</div>
-          </div>
         </div>
 
         <div class="meta">
@@ -63,11 +67,15 @@ import {GameDetail} from '../models/game.model';
           </span>
         </div>
 
-        <div class="stats">
-          <div>BGG: <b>{{ game.ratingBgg }}</b></div>
-          <div>{{ 'game.ratingPersonal' | translate }} <b>{{ game.ratingPersonal ?? '—' }}</b></div>
-          <div>{{ 'game.complexity' | translate }}: <b>{{ game.complexity }}</b> / 5</div>
-        </div>
+        <game-indicators
+          [bggId]="game.bggId"
+          [isExpansion]="false"
+          [ratingBgg]="game.ratingBgg"
+          [ratingPersonal]="game.ratingPersonal"
+          [complexity]="game.complexity"
+          [lastPlayed]="game.lastPlayed"
+          size="mini"
+        ></game-indicators>
       </div>
 
       <div *ngIf="game.expansions?.length" class="exp">
@@ -77,16 +85,16 @@ import {GameDetail} from '../models/game.model';
 
         <div
           class="exp-item"
-          *ngFor="let e of game.expansions"
-          [class.recent-exp]="isRecentlyPlayed(e.lastPlayed)"
+          *ngFor="let expansion of game.expansions"
+          [class.recent-exp]="isRecentlyPlayed(expansion.lastPlayed)"
         >
           <div class="exp-left">
-            <ng-container *ngIf="e.imageUrl; else expPlaceholder">
+            <ng-container *ngIf="expansion.imageUrl; else expPlaceholder">
               <img
                 class="exp-cover"
-                [src]="e.imageUrl!"
-                (error)="e.imageUrl = null"
-                [alt]="e.name"
+                [src]="expansion.imageUrl!"
+                (error)="expansion.imageUrl = null"
+                [alt]="expansion.name"
               >
             </ng-container>
 
@@ -94,10 +102,10 @@ import {GameDetail} from '../models/game.model';
               <div class="exp-cover placeholder small"></div>
             </ng-template>
 
-            <a [routerLink]="['/expansions', e.bggId]">{{ e.name }}</a>
+            <a [routerLink]="['/expansions', expansion.bggId]">{{ expansion.name }}</a>
           </div>
 
-          <span>{{ e.lastPlayed || '—' }}</span>
+          <span>{{ formatLastPlayedRef(expansion.lastPlayed) }}</span>
         </div>
       </div>
     </div>
@@ -190,20 +198,11 @@ import {GameDetail} from '../models/game.model';
       padding: 4px 8px;
     }
 
-    .last {
-      text-align: right;
-      font-size: 12px;
-      flex: 0 0 auto;
-    }
-
-    .value {
-      font-weight: 600;
-    }
-
     .meta {
       font-size: 13px;
       opacity: 0.75;
-      margin-top: 4px;
+      margin-top: 6px;
+      margin-bottom: 12px;
     }
 
     .meta-item {
@@ -219,14 +218,6 @@ import {GameDetail} from '../models/game.model';
       height: 1em;
       line-height: 1;
       vertical-align: middle;
-    }
-
-    .stats {
-      margin-top: 8px;
-      display: flex;
-      gap: 12px;
-      font-size: 13px;
-      flex-wrap: wrap;
     }
 
     .exp {
@@ -302,16 +293,14 @@ import {GameDetail} from '../models/game.model';
       .header {
         flex-direction: column;
       }
-
-      .last {
-        text-align: left;
-      }
     }
   `]
 })
 export class GameCardComponent {
   @Input() game!: GameDetail;
   @Input() filterPlayers?: number;
+
+  protected readonly formatLastPlayedRef = formatLastPlayed
 
   get playersText(): string {
     return formatRange(this.game.playersMin, this.game.playersMax);

@@ -1,12 +1,13 @@
 import {NgIf} from '@angular/common';
 import {Component, Input} from '@angular/core';
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'rating-indicator',
   standalone: true,
-  imports: [NgIf],
+  imports: [NgIf, TranslatePipe],
   template: `
-    <div class="rating-hex-group">
+    <div class="rating-hex-group" [class.rating-hex-group--mini]="size === 'mini'">
       <div
         class="rating-hex"
         [style.background]="getRatingColor(value)"
@@ -15,17 +16,17 @@ import {Component, Input} from '@angular/core';
       </div>
 
       <a
-        *ngIf="isBgg; else plainLabel"
+        *ngIf="bggId != null; else plainLabel"
         class="rating-label rating-link"
         [href]="bggUrl"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ label }}
+        {{ 'game.ratingBgg' | translate }}
       </a>
 
       <ng-template #plainLabel>
-        <span class="rating-label">{{ label }}</span>
+        <span class="rating-label">{{ 'game.ratingPersonal' | translate }}</span>
       </ng-template>
     </div>
   `,
@@ -67,6 +68,21 @@ import {Component, Input} from '@angular/core';
       min-height: 13px;
     }
 
+    .rating-hex-group--mini .rating-hex {
+      width: 64px;
+      padding: 4px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
+    }
+
+    .rating-hex-group--mini .rating-value {
+      font-size: 22px;
+    }
+
+    .rating-hex-group--mini .rating-label {
+      font-size: 10px;
+      min-height: auto;
+    }
+
     .rating-link {
       color: #1976d2;
       text-decoration: none;
@@ -85,9 +101,10 @@ import {Component, Input} from '@angular/core';
 })
 export class RatingIndicatorComponent {
   @Input() value?: number | null;
-  @Input() label = '';
-  @Input() isBgg = false;
-  @Input() bggUrl?: string | null;
+  @Input() bggId: number | null = null;
+  @Input() isExpansion: boolean = false;
+
+  @Input() size: 'default' | 'mini' = 'default';
 
   getRatingColor(value?: number | null): string {
     if (value == null || Number.isNaN(value)) {
@@ -98,5 +115,13 @@ export class RatingIndicatorComponent {
     const hue = ((clamped - 1) / 9) * 120;
 
     return `hsl(${hue}, 65%, 45%)`;
+  }
+
+  get bggUrl(): string {
+    if (this.isExpansion) {
+      return "https://boardgamegeek.com/boardgameexpansion/" + this.bggId;
+    } else {
+      return "https://boardgamegeek.com/boardgame/" + this.bggId;
+    }
   }
 }

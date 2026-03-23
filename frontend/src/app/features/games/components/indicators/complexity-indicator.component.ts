@@ -7,8 +7,8 @@ import {MatIcon} from '@angular/material/icon';
   standalone: true,
   imports: [NgFor, MatIcon],
   template: `
-    <div class="complexity-indicator-group">
-      <div class="icon-indicator icon-indicator-complexity">
+    <div class="complexity-group" [class.complexity-group--mini]="size === 'mini'">
+      <div class="icon-indicator">
         <mat-icon
           class="complexity-icon"
           [style.color]="getComplexityIconColor(complexity)"
@@ -30,7 +30,7 @@ import {MatIcon} from '@angular/material/icon';
     </div>
   `,
   styles: [`
-    .complexity-indicator-group {
+    .complexity-group {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -53,7 +53,7 @@ import {MatIcon} from '@angular/material/icon';
       }
     }
 
-    .icon-indicator-complexity .complexity-icon {
+    .icon-indicator .complexity-icon {
       width: 88px;
       height: 88px;
       font-size: 88px;
@@ -97,10 +97,43 @@ import {MatIcon} from '@angular/material/icon';
       text-align: center;
       min-height: 13px;
     }
+
+    .complexity-group--mini .icon-indicator {
+      width: 64px;
+      height: 64px;
+    }
+
+    .complexity-group--mini .complexity-icon {
+      width: 42px;
+      height: 42px;
+      font-size: 42px;
+      line-height: 42px;
+    }
+
+    .complexity-group--mini .complexity-meter-overlay {
+      top: 52px;
+    }
+
+    .complexity-group--mini .complexity-meter {
+      gap: 3px;
+      min-height: 8px;
+    }
+
+    .complexity-group--mini .complexity-segment {
+      width: 8px;
+      height: 5px;
+    }
+
+    .complexity-group--mini .icon-indicator-label {
+      font-size: 10px;
+      min-height: auto;
+    }
   `]
 })
 export class ComplexityIndicatorComponent {
   @Input() complexity?: number | null;
+
+  @Input() size: 'default' | 'mini' = 'default';
 
   getComplexitySegments(value?: number | null): number[] {
     if (value == null || Number.isNaN(value)) {

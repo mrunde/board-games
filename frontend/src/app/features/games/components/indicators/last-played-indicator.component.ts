@@ -2,13 +2,18 @@ import {NgIf} from "@angular/common";
 import {Component, Input} from '@angular/core';
 import {MatIcon} from '@angular/material/icon';
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {formatLastPlayed} from "../../../../shared/utils/last-played-format.util";
 
 @Component({
   selector: 'last-played-indicator',
   standalone: true,
   imports: [NgIf, MatIcon, TranslatePipe],
   template: `
-    <div class="last-played-card" [class.last-played-card--muted]="!lastPlayed">
+    <div
+      class="last-played-card"
+      [class.last-played-card--muted]="!lastPlayed"
+      [class.last-played-card--mini]="size === 'mini'"
+    >
       <div class="last-played-main">
         <div class="last-played-icon-wrap" aria-hidden="true">
           <mat-icon class="last-played-icon">calendar_today</mat-icon>
@@ -20,7 +25,7 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
           </div>
 
           <div class="last-played-date">
-            {{ formatLastPlayed() }}
+            {{ formatLastPlayedRef(lastPlayed) }}
           </div>
 
           <div class="last-played-ago" *ngIf="getLastPlayedAgo() as ago">
@@ -94,6 +99,35 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
       word-break: break-word;
     }
 
+    .last-played-card--mini {
+      min-width: auto;
+      max-width: none;
+      padding: 6px 8px;
+      border-radius: 10px;
+    }
+
+    .last-played-card--mini .last-played-main {
+      gap: 8px;
+    }
+
+    .last-played-card--mini .last-played-icon-wrap {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+    }
+
+    .last-played-card--mini .last-played-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
+
+    .last-played-card--mini .last-played-date {
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
     .last-played-ago {
       font-size: 12px;
       line-height: 1.2;
@@ -124,27 +158,14 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 export class LastPlayedIndicatorComponent {
   @Input() lastPlayed?: string | null;
 
+  @Input() size: 'default' | 'mini' = 'default';
+
   constructor(
     private readonly translate: TranslateService
   ) {
   }
 
-  formatLastPlayed(): string {
-    if (!this.lastPlayed) {
-      return '—';
-    }
-
-    const played = new Date(this.lastPlayed);
-    if (Number.isNaN(played.getTime())) {
-      return '—';
-    }
-
-    return new Intl.DateTimeFormat(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(played);
-  }
+  protected readonly formatLastPlayedRef = formatLastPlayed
 
   getLastPlayedAgo(): string {
     if (!this.lastPlayed) {

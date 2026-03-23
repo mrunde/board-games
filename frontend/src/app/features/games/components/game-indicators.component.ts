@@ -1,5 +1,4 @@
 import {Component, Input} from "@angular/core";
-import {TranslatePipe} from "@ngx-translate/core";
 import {ComplexityIndicatorComponent} from "./indicators/complexity-indicator.component";
 import {LastPlayedIndicatorComponent} from "./indicators/last-played-indicator.component";
 import {RatingIndicatorComponent} from "./indicators/rating-indicator.component";
@@ -10,26 +9,22 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
   imports: [
     ComplexityIndicatorComponent,
     LastPlayedIndicatorComponent,
-    RatingIndicatorComponent,
-    TranslatePipe
+    RatingIndicatorComponent
   ],
   template: `
     <div class="indicators">
       <rating-indicator
         [value]="ratingBgg"
-        label="BGG"
-        [isBgg]="true"
-        [bggUrl]="bggUrl"
+        [bggId]="bggId"
+        [isExpansion]="isExpansion"
+        [size]="size"
       ></rating-indicator>
 
-      <rating-indicator
-        [value]="ratingPersonal"
-        [label]="'game.ratingPersonal' | translate"
-      ></rating-indicator>
+      <rating-indicator [value]="ratingPersonal" [size]="size"></rating-indicator>
 
-      <complexity-indicator [complexity]="complexity"></complexity-indicator>
+      <complexity-indicator [complexity]="complexity" [size]="size"></complexity-indicator>
 
-      <last-played-indicator [lastPlayed]="lastPlayed"></last-played-indicator>
+      <last-played-indicator [lastPlayed]="lastPlayed" [size]="size"></last-played-indicator>
     </div>
   `,
   styles: [`
@@ -51,19 +46,12 @@ import {RatingIndicatorComponent} from "./indicators/rating-indicator.component"
   `]
 })
 export class GameIndicatorsComponent {
-  @Input() bggId?: number;
+  @Input() bggId: number | null = null;
+  @Input() isExpansion: boolean = false;
   @Input() ratingBgg?: number;
   @Input() ratingPersonal?: number | null;
   @Input() complexity?: number;
   @Input() lastPlayed?: string | null;
 
-  @Input() mainGameName?: string | null;
-
-  get bggUrl(): string {
-    if (this.mainGameName == null) {
-      return "https://boardgamegeek.com/boardgame/" + this.bggId;
-    } else {
-      return "https://boardgamegeek.com/boardgameexpansion/" + this.bggId;
-    }
-  }
+  @Input() size: 'default' | 'mini' = 'default';
 }
