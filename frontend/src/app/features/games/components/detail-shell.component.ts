@@ -200,7 +200,7 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      padding-top: 8px;
+      padding: 8px 12px;
       margin-bottom: 12px;
     }
 
@@ -256,7 +256,7 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     .card {
       background: white;
       border-radius: 14px;
-      padding: 16px;
+      padding: 14px;
       border: 2px solid transparent;
     }
 
@@ -315,8 +315,8 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     }
 
     .main-game-link {
-      margin-bottom: 10px;
-      font-size: 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
     }
 
     .main-game-link a {
@@ -326,8 +326,10 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     }
 
     .meta {
+      font-size: 13px;
       opacity: 0.75;
-      margin: 8px 0 12px;
+      margin-top: 6px;
+      margin-bottom: 12px;
     }
 
     .meta-item {

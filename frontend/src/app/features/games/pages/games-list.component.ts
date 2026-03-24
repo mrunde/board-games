@@ -41,25 +41,53 @@ import {GameDetail} from '../models/game.model';
         <div class="header-row">
           <h1>{{ 'games.title' | translate }}</h1>
 
-          <app-language-switcher></app-language-switcher>
+          <div class="header-actions">
+            <div class="games-count">
+              {{
+                (games.length === 1 ? 'games.count_one' : 'games.count_other')
+                  | translate:{count: games.length}
+              }}
+            </div>
+
+            <app-language-switcher></app-language-switcher>
+          </div>
         </div>
 
         <div class="quick-filters">
           <button type="button" (click)="setPlayers(2)" [class.active]="players === 2">
-            2 <mat-icon>group</mat-icon>
+            2
+            <mat-icon>group</mat-icon>
           </button>
           <button type="button" (click)="setPlayers(3)" [class.active]="players === 3">
-            3 <mat-icon>group</mat-icon>
+            3
+            <mat-icon>group</mat-icon>
           </button>
           <button type="button" (click)="setPlayers(4)" [class.active]="players === 4">
-            4 <mat-icon>group</mat-icon>
+            4
+            <mat-icon>group</mat-icon>
           </button>
           <button type="button" (click)="clearPlayers()" [class.active]="players == null">
             {{ 'common.all' | translate }}
           </button>
+
+          <button
+            type="button"
+            (click)="toggleRecommendedSplit()"
+            [class.active]="splitRecommended"
+            [disabled]="players == null"
+          >
+            {{ 'common.recommended' | translate }}
+          </button>
         </div>
 
         <div class="filters">
+          <input
+            type="text"
+            [placeholder]="'game.name' | translate"
+            [(ngModel)]="search"
+            (ngModelChange)="onFiltersChanged()"
+          />
+
           <input
             type="number"
             [placeholder]="'game.players' | translate"
@@ -85,22 +113,33 @@ import {GameDetail} from '../models/game.model';
               {{ dir === 'asc' ? 'north' : 'south' }}
             </mat-icon>
           </button>
-
-          <div class="games-count">
-            {{
-              (games.length === 1 ? 'games.count_one' : 'games.count_other')
-                | translate:{count: games.length}
-            }}
-          </div>
         </div>
       </div>
 
       <div class="list" *ngIf="games.length > 0; else noResults">
-        <game-card
-          *ngFor="let game of games"
-          [game]="game"
-          [filterPlayers]="players"
-        ></game-card>
+        <ng-container *ngIf="shouldSplitRecommended(); else plainList">
+          <game-card
+            *ngFor="let game of recommendedGames"
+            [game]="game"
+            [filterPlayers]="players"
+          ></game-card>
+
+          <hr *ngIf="recommendedGames.length > 0 && otherGames.length > 0" class="games-divider">
+
+          <game-card
+            *ngFor="let game of otherGames"
+            [game]="game"
+            [filterPlayers]="players"
+          ></game-card>
+        </ng-container>
+
+        <ng-template #plainList>
+          <game-card
+            *ngFor="let game of games"
+            [game]="game"
+            [filterPlayers]="players"
+          ></game-card>
+        </ng-template>
       </div>
 
       <ng-template #noResults>
@@ -123,9 +162,12 @@ import {GameDetail} from '../models/game.model';
       top: 0;
       z-index: 20;
       background: #f5f5f5;
-      padding-top: 8px;
-      padding-bottom: 8px;
+      padding: 8px 12px;
       margin-bottom: 14px;
+    }
+
+    .sticky-header h1 {
+      margin: 0;
     }
 
     .header-row {
@@ -136,12 +178,25 @@ import {GameDetail} from '../models/game.model';
       margin-bottom: 12px;
     }
 
-    app-language-switcher {
-      justify-self: end;
+    .header-actions {
+      display: grid;
+      grid-template-columns: max-content auto;
+      align-items: center;
+      gap: 12px;
     }
 
-    .sticky-header h1 {
-      margin: 0;
+    .games-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
+      min-width: 92px;
+      text-align: right;
+    }
+
+    app-language-switcher {
+      justify-self: end;
+      flex: 0 0 auto;
     }
 
     .quick-filters {
@@ -168,10 +223,16 @@ import {GameDetail} from '../models/game.model';
 
     .filters {
       display: grid;
-      grid-template-columns: minmax(80px, 0.8fr) minmax(0, 1fr) auto;
+      grid-template-columns: minmax(80px, 0.8fr) minmax(0, 1fr) auto auto;
       gap: 10px;
       margin-bottom: 14px;
       align-items: center;
+    }
+
+    @media (min-width: 700px) {
+      .filters {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
     .quick-filters mat-icon {
@@ -182,22 +243,9 @@ import {GameDetail} from '../models/game.model';
       vertical-align: middle;
     }
 
-    .games-count {
-      font-size: 14px;
-      font-weight: 600;
-      color: #555;
-      white-space: nowrap;
-    }
-
     .list {
       position: relative;
       z-index: 1;
-    }
-
-    @media (min-width: 700px) {
-      .filters {
-        grid-template-columns: repeat(4, 1fr);
-      }
     }
 
     .no-results {
@@ -216,11 +264,20 @@ import {GameDetail} from '../models/game.model';
       width: 40px;
       height: 40px;
     }
+
+    .games-divider {
+      border: 0;
+      border-top: 1px solid #d8d8d8;
+      margin: 16px 0 18px;
+    }
   `]
 })
 export class GamesListComponent implements OnInit {
   games: GameDetail[] = [];
+  allGames: GameDetail[] = [];
+  splitRecommended = false;
 
+  search = '';
   players?: number;
   sort = 'name';
   dir = 'asc';
@@ -231,6 +288,22 @@ export class GamesListComponent implements OnInit {
   private readonly filtersChanged$ = new Subject<void>();
 
   constructor(private readonly api: BoardgamesService) {
+  }
+
+  get recommendedGames(): GameDetail[] {
+    if (this.players == null) {
+      return this.games;
+    }
+
+    return this.games.filter(game => this.isRecommendedForPlayers(game));
+  }
+
+  get otherGames(): GameDetail[] {
+    if (this.players == null) {
+      return [];
+    }
+
+    return this.games.filter(game => !this.isRecommendedForPlayers(game));
   }
 
   ngOnInit(): void {
@@ -251,7 +324,10 @@ export class GamesListComponent implements OnInit {
       this.players,
       this.sort,
       this.dir
-    ).subscribe(g => this.games = g);
+    ).subscribe(g => {
+      this.allGames = g;
+      this.applySearchFilter();
+    });
   }
 
   setPlayers(players: number): void {
@@ -261,7 +337,22 @@ export class GamesListComponent implements OnInit {
 
   clearPlayers(): void {
     this.players = undefined;
+    this.splitRecommended = false;
     this.onFiltersChanged();
+  }
+
+  toggleRecommendedSplit(): void {
+    if (this.players == null) {
+      this.splitRecommended = false;
+      return;
+    }
+
+    this.splitRecommended = !this.splitRecommended;
+    this.saveState();
+  }
+
+  shouldSplitRecommended(): boolean {
+    return this.splitRecommended && this.players != null;
   }
 
   onFiltersChanged(): void {
@@ -288,9 +379,29 @@ export class GamesListComponent implements OnInit {
     this.onFiltersChanged();
   }
 
+  private applySearchFilter(): void {
+    const query = this.search.trim().toLowerCase();
+
+    if (!query) {
+      this.games = this.allGames;
+      return;
+    }
+
+    this.games = this.allGames.filter(game => {
+      const gameMatches = game.name.toLowerCase().includes(query);
+      const expansionMatches = game.expansions?.some(expansion =>
+        expansion.name.toLowerCase().includes(query)
+      );
+
+      return gameMatches || expansionMatches;
+    });
+  }
+
   private saveState(): void {
     const state = {
-      minPlayers: this.players ?? null,
+      search: this.search,
+      players: this.players ?? null,
+      splitRecommended : this.splitRecommended,
       sort: this.sort,
       dir: this.dir,
     };
@@ -306,16 +417,22 @@ export class GamesListComponent implements OnInit {
 
     try {
       const state = JSON.parse(raw) as {
+        search: string | null;
         players: number | null;
+        splitRecommended: boolean;
         sort: string;
         dir: string;
-        selectedPlayDate: string | null;
       };
 
+      this.search = state.search || '';
       this.players = state.players ?? undefined;
+      if (this.players == null) {
+        this.splitRecommended = false;
+      } else {
+        this.splitRecommended = state.splitRecommended;
+      }
       this.sort = state.sort || 'name';
       this.dir = state.dir || 'asc';
-      this.selectedPlayDate = state.selectedPlayDate ? new Date(state.selectedPlayDate) : new Date();
 
       if (this.sort === 'name') {
         this.dir = 'asc';
@@ -334,5 +451,13 @@ export class GamesListComponent implements OnInit {
       this.sort = 'name';
       this.dir = 'asc';
     }
+  }
+
+  private isRecommendedForPlayers(game: GameDetail): boolean {
+    return (
+      this.players != null &&
+      game.playersRecMin <= this.players &&
+      game.playersRecMax >= this.players
+    );
   }
 }

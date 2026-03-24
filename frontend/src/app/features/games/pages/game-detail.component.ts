@@ -76,30 +76,34 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
     }
 
     .exp-item {
+      font-size: 13px;
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 8px 0;
+      padding: 6px 0;
       align-items: center;
     }
 
     .exp-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
     }
 
     .exp-cover {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       object-fit: cover;
       border-radius: 6px;
-      flex: 0 0 36px;
+      flex: 0 0 32px;
       background: #eee;
     }
 
     .exp-cover.small.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border: 1px dashed #c7c7c7;
       background: linear-gradient(135deg, #f3f3f3 25%, #ebebeb 25%, #ebebeb 50%, #f3f3f3 50%, #f3f3f3 75%, #ebebeb 75%, #ebebeb 100%);
       background-size: 12px 12px;
@@ -113,18 +117,10 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       white-space: nowrap;
     }
 
-    .exp-item a {
-      text-decoration: none;
-      color: inherit;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .recent-exp {
       background: rgba(124, 179, 66, 0.08);
       border-radius: 8px;
-      padding: 8px;
+      padding: 6px 8px;
     }
   `]
 })
