@@ -66,7 +66,7 @@ import {GameDetail} from '../models/game.model';
             4
             <mat-icon>group</mat-icon>
           </button>
-          <button type="button" (click)="clearPlayers()" [class.active]="players == null">
+          <button type="button" (click)="clearFilters()" [class.active]="players == null && !search">
             {{ 'common.all' | translate }}
           </button>
 
@@ -335,7 +335,8 @@ export class GamesListComponent implements OnInit {
     this.onFiltersChanged();
   }
 
-  clearPlayers(): void {
+  clearFilters(): void {
+    this.search = '';
     this.players = undefined;
     this.splitRecommended = false;
     this.onFiltersChanged();
