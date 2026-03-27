@@ -13,6 +13,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_FLYWAY_SCHEMAS: ${SPRING_FLYWAY_SCHEMAS}
       APP_BASE_URL: ${APP_BASE_URL}
-      APP_IMAGES_PATH: /app/data/images
+      APP_ASSETS_PATH: /app/data/assets
     volumes:
-      - ${IMAGE_STORAGE_HOST_PATH}:/app/data/images
+      - ${ASSETS_STORAGE_HOST_PATH}:/app/data/assets

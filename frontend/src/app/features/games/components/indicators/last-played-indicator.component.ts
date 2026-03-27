@@ -165,7 +165,10 @@ export class LastPlayedIndicatorComponent {
   ) {
   }
 
-  protected readonly formatLastPlayedRef = formatLastPlayed
+  formatLastPlayedRef(lastPlayed?: string | null): string {
+    const lang = this.translate.getCurrentLang() || this.translate.getFallbackLang() || 'en';
+    return formatLastPlayed(lastPlayed, lang);
+  }
 
   getLastPlayedAgo(): string {
     if (!this.lastPlayed) {
@@ -194,29 +197,45 @@ export class LastPlayedIndicatorComponent {
       months += 12;
     }
 
+    // Years ago
     if (years > 0) {
-      const dateUnit = this.translate.instant(`play.year${years === 1 ? '' : 's'}`);
-      return this.translate.instant('play.playedAgo', {count: years, dateUnit});
+      return this.translateLastPlayedAgo("year", years);
     }
 
+    // Months ago
     if (months > 0) {
-      const dateUnit = this.translate.instant(`play.month${months === 1 ? '' : 's'}`);
-      return this.translate.instant('play.playedAgo', {count: months, dateUnit});
+      return this.translateLastPlayedAgo("month", months);
     }
 
+    // Weeks ago
     const totalDays = Math.max(
       0,
       Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
     );
-
     if (totalDays >= 7) {
       const weeks = Math.floor(totalDays / 7);
-      const dateUnit = this.translate.instant(`play.week${weeks === 1 ? '' : 's'}`);
-      return this.translate.instant('play.playedAgo', {count: weeks, dateUnit});
+      return this.translateLastPlayedAgo("week", weeks);
+    }
+
+    // Yesterday
+    if (totalDays == 1) {
+      return this.translate.instant('play.yesterday');
+    }
+
+    // Today
+    if (totalDays == 0) {
+      return this.translate.instant('play.today');
     }
 
     const safeDays = Math.max(0, totalDays);
-    const dateUnit = this.translate.instant(`play.day${safeDays === 1 ? '' : 's'}`);
-    return this.translate.instant('play.playedAgo', {count: safeDays, dateUnit});
+    return this.translateLastPlayedAgo("day", safeDays);
+  }
+
+  private translateLastPlayedAgo(
+    dateUnit: "year" | "month" | "week" | "day",
+    count: number
+  ): string {
+    const translatedDateUnit = this.translate.instant(`play.${dateUnit}${count === 1 ? '' : 's'}`);
+    return this.translate.instant('play.playedAgo', {count: count, translatedDateUnit});
   }
 }

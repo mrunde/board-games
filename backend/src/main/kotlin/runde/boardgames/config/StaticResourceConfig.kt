@@ -3,15 +3,15 @@ package runde.boardgames.config
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import runde.boardgames.config.properties.ImageProperties
+import runde.boardgames.config.properties.AssetProperties
 
 @Configuration
 class StaticResourceConfig(
-  private val imageProperties: ImageProperties,
+  private val assetProperties: AssetProperties,
 ) : WebMvcConfigurer {
   override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
     registry
-      .addResourceHandler("${imageProperties.publicBase}/**")
-      .addResourceLocations("file:${imageProperties.path.trimEnd('/')}/")
+      .addResourceHandler("${assetProperties.publicBase}/**")
+      .addResourceLocations("file:${assetProperties.path.trimEnd('/')}/")
   }
 }

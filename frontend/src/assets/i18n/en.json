@@ -2,6 +2,7 @@
   "common": {
     "all": "All",
     "expansions": "Expansions",
+    "files": "Files",
     "noImage": "No image",
     "recommended": "★ Recommended",
     "loading": "Loading…",
@@ -32,12 +33,13 @@
   },
   "play": {
     "lastPlayed": "Last played",
-    "today": "Today",
     "date": "Date",
     "saving": "Saving…",
     "recorded": "Play recorded for {{playedOn}}.",
     "playedOn": "Played on {{playedOn}}",
     "playedAgo": "{{count}} {{dateUnit}} ago",
+    "today": "Today",
+    "yesterday": "Yesterday",
     "day": "day",
     "days": "days",
     "week": "week",

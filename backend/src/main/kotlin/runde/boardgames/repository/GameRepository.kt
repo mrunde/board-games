@@ -13,13 +13,13 @@ import runde.boardgames.dto.GameDto
 import runde.boardgames.entity.Game
 import runde.boardgames.entity.Play
 import runde.boardgames.entity.toGameDto
-import runde.boardgames.util.ImageUrlResolver
+import runde.boardgames.service.AssetService
 import java.math.BigDecimal
 import java.time.LocalDate
 
 @Repository
 class GameRepository(
-  private val imageUrlResolver: ImageUrlResolver,
+  private val assetService: AssetService,
 ) {
   fun findById(bggId: Int): GameDto? =
     transaction {
@@ -79,12 +79,15 @@ class GameRepository(
           .sortedBy { it.first.name }
 
       mainGames.map { mainGame ->
+        val gameFiles = assetService.getGameFiles(mainGame.first.bggId)
+
         GameDetailDto.fromGameDto(
           gameWithLastPlayed = mainGame,
           expansionsWithLastPlayed =
             (byMainId[mainGame.first.bggId].orEmpty())
               .sortedBy { it.first.name },
-          imageUrlResolver = imageUrlResolver,
+          files = gameFiles,
+          assetService = assetService,
         )
       }
     }

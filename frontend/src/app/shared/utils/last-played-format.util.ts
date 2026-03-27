@@ -1,4 +1,4 @@
-export function formatLastPlayed(lastPlayed?: string | null): string {
+export function formatLastPlayed(lastPlayed?: string | null, locale?: string): string {
   if (!lastPlayed) {
     return '—';
   }
@@ -8,7 +8,7 @@ export function formatLastPlayed(lastPlayed?: string | null): string {
     return '—';
   }
 
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale ?? undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric'

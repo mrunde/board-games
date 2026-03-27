@@ -2,6 +2,7 @@
   "common": {
     "all": "Alle",
     "expansions": "Erweiterungen",
+    "files": "Dateien",
     "noImage": "Kein Bild",
     "recommended": "★ Empfohlen",
     "loading": "Lade…",
@@ -32,12 +33,13 @@
   },
   "play": {
     "lastPlayed": "Zuletzt gespielt",
-    "today": "Heute",
     "date": "Datum",
     "saving": "Speichere…",
     "recorded": "Spiel eingetragen für {{playedOn}}.",
     "playedOn": "Gespielt am {{playedOn}}",
     "playedAgo": "vor {{count}} {{dateUnit}}",
+    "today": "Heute",
+    "yesterday": "Gestern",
     "day": "Tag",
     "days": "Tagen",
     "week": "Woche",

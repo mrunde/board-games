@@ -1,3 +1,10 @@
+export interface AssetFile {
+  fileName: string;
+  url: string;
+  language: string;
+  label: string;
+}
+
 export interface Expansion {
   bggId: number;
   name: string;
@@ -13,6 +20,7 @@ export interface Expansion {
   playersRecMax: number;
   mainGameId: number;
   lastPlayed: string | null;
+  files: AssetFile[];
 }
 
 export interface GameDetail {
@@ -29,5 +37,6 @@ export interface GameDetail {
   playersRecMin: number;
   playersRecMax: number;
   lastPlayed: string | null;
+  files: AssetFile[];
   expansions: Expansion[];
 }

@@ -6,12 +6,11 @@ import runde.boardgames.dto.GameDto
 import runde.boardgames.exception.BadRequestException
 import runde.boardgames.exception.NotFoundException
 import runde.boardgames.repository.GameRepository
-import runde.boardgames.util.ImageUrlResolver
 
 @Service
 class GameService(
   private val gameRepository: GameRepository,
-  private val imageUrlResolver: ImageUrlResolver,
+  private val assetService: AssetService,
 ) {
   fun getByIdWithExpansions(bggId: Int): GameDetailDto {
     // Get the main game
@@ -21,11 +20,14 @@ class GameService(
     }
     // Get its expansions
     val expansionsWithLastPlayed = gameRepository.findExpansionsWithLastPlayed(bggId)
+    // Get the assets
+    val gameFiles = assetService.getGameFiles(bggId)
     // Return the game details
     return GameDetailDto.fromGameDto(
-      mainGameWithLastPlayed,
-      expansionsWithLastPlayed,
-      imageUrlResolver,
+      gameWithLastPlayed = mainGameWithLastPlayed,
+      expansionsWithLastPlayed = expansionsWithLastPlayed,
+      files = gameFiles,
+      assetService = assetService,
     )
   }
 

@@ -32,7 +32,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       [playersRecMin]="game?.playersRecMin"
       [playersRecMax]="game?.playersRecMax"
       [lastPlayed]="game?.lastPlayed"
-      [recent]="ui.isRecentlyPlayed(game?.lastPlayed ?? null)"
+      [files]="game?.files"
       [selectedPlayDate]="selectedPlayDate"
       [playDateLabel]="selectedPlayDateLabel"
       [playSubmitting]="playSubmitting"

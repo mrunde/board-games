@@ -1,4 +1,4 @@
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatButton} from "@angular/material/button";
@@ -10,6 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
 import {formatRange} from "../../../shared/utils/range-format.util";
+import {AssetFile} from "../models/game.model";
+import {DetailPageUiService} from "../services/detail-page-ui.service";
 import {GameIndicatorsComponent} from "./game-indicators.component";
 import {LanguageSwitcherComponent} from "./language-switcher.component";
 
@@ -24,6 +26,7 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     MatIcon,
     MatInputModule,
     MatNativeDateModule,
+    NgForOf,
     NgIf,
     RouterLink,
     TranslatePipe,
@@ -58,7 +61,11 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
         {{ successMessage }}
       </div>
 
-      <div class="card" *ngIf="!loading && !error && title" [class.recent]="recent">
+      <div
+        class="card"
+        *ngIf="!loading && !error && title"
+        [class.recent]="ui.isRecentlyPlayed(lastPlayed ?? null)"
+      >
         <div class="media" *ngIf="imageUrl">
           <img
             class="cover clickable"
@@ -166,6 +173,36 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
         </div>
 
         <ng-content></ng-content>
+
+        <div *ngIf="files?.length" class="asset-section">
+          <h2 class="asset-title">{{ 'common.files' | translate }}</h2>
+
+          <div class="asset-language-groups">
+            <div *ngFor="let group of groupedFiles" class="asset-language-group">
+              <div class="asset-language-header">
+                <img
+                  class="asset-language-flag"
+                  [src]="flagUrl(group.language)"
+                  [alt]="group.language.toUpperCase()"
+                >
+                <span>{{ languageLabel(group.language) }}</span>
+              </div>
+
+              <div class="asset-list">
+                <a
+                  *ngFor="let file of group.files"
+                  class="asset-link"
+                  [href]="file.url"
+                  target="_blank"
+                  rel="noopener"
+                  [attr.aria-label]="file.label + ' ' + group.language"
+                >
+                  <span class="asset-label">{{ file.label }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div
@@ -393,6 +430,85 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     .error-inline {
       margin-bottom: 12px;
     }
+
+    .asset-section {
+      margin: 16px 0 18px;
+    }
+
+    .asset-title {
+      margin-top: 18px;
+    }
+
+    .asset-language-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .asset-language-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .asset-language-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b647d;
+    }
+
+    .asset-language-flag {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+      flex: 0 0 16px;
+    }
+
+    .asset-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .asset-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid #d8e2f0;
+      background: #f8fbff;
+      color: #174a7c;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    .asset-link:hover {
+      background: #eef6ff;
+      border-color: #b8d2ee;
+      transform: translateY(-1px);
+    }
+
+    .asset-label {
+      line-height: 1.2;
+    }
+
+    @media (max-width: 600px) {
+      .asset-list {
+        flex-direction: column;
+      }
+
+      .asset-link {
+        justify-content: space-between;
+      }
+    }
   `]
 })
 export class DetailShellComponent {
@@ -414,7 +530,7 @@ export class DetailShellComponent {
   @Input() playersRecMin?: number;
   @Input() playersRecMax?: number;
   @Input() lastPlayed?: string | null;
-  @Input() recent = false;
+  @Input() files?: AssetFile[];
 
   @Input() mainGameName?: string | null;
   @Input() mainGameLink?: unknown[] | null;
@@ -431,6 +547,11 @@ export class DetailShellComponent {
 
   imagePreviewOpen = false;
 
+  constructor(
+    public ui: DetailPageUiService
+  ) {
+  }
+
   get playersText(): string {
     return formatRange(this.playersMin, this.playersMax);
   }
@@ -441,6 +562,38 @@ export class DetailShellComponent {
 
   get playingTimeText(): string {
     return formatRange(this.playingTimeMin, this.playingTimeMax, ' min');
+  }
+
+  get groupedFiles(): Array<{ language: string; files: AssetFile[] }> {
+    const groups = new Map<string, AssetFile[]>();
+
+    for (const file of this.files || []) {
+      const language = (file.language ?? '').toLowerCase();
+      const existing = groups.get(language) ?? [];
+      existing.push(file);
+      groups.set(language, existing);
+    }
+
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([language, files]) => ({
+        language,
+        files: files.slice().sort((a, b) => a.label.localeCompare(b.label)),
+      }));
+  }
+
+  languageLabel(language: string | null | undefined): string {
+    const code = (language ?? '').toLowerCase();
+    if (code === 'de') return 'Deutsch';
+    if (code === 'en') return 'English';
+    return code.toUpperCase();
+  }
+
+  flagUrl(language: string | null | undefined): string {
+    const code = (language ?? '').toLowerCase();
+    return code === 'de' || code === 'en'
+      ? `assets/flags/${code}.svg`
+      : 'assets/flags/en.svg';
   }
 
   openImagePreview(): void {

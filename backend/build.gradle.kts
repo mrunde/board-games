@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "runde"
-version = "0.4.1"
+version = "0.5.0"
 description = "board-games"
 
 java {

@@ -27,9 +27,9 @@ spring:
     schemas: ${SPRING_FLYWAY_SCHEMAS}
 
 app:
-  images:
+  assets:
     base-url: ${APP_BASE_URL}
-    path: ${APP_IMAGES_PATH}
+    path: ${APP_ASSETS_PATH}
     public-base: /media
 
 logging:

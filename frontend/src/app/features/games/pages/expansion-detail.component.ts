@@ -32,7 +32,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       [playersRecMin]="expansion?.playersRecMin"
       [playersRecMax]="expansion?.playersRecMax"
       [lastPlayed]="expansion?.lastPlayed"
-      [recent]="ui.isRecentlyPlayed(expansion?.lastPlayed ?? null)"
+      [files]="expansion?.files"
       [mainGameName]="mainGame?.name"
       [mainGameLink]="mainGame ? ['/games', mainGame.bggId] : null"
       [selectedPlayDate]="selectedPlayDate"
