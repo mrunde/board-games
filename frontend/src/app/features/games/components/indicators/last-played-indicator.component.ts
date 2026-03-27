@@ -236,6 +236,6 @@ export class LastPlayedIndicatorComponent {
     count: number
   ): string {
     const translatedDateUnit = this.translate.instant(`play.${dateUnit}${count === 1 ? '' : 's'}`);
-    return this.translate.instant('play.playedAgo', {count: count, translatedDateUnit});
+    return this.translate.instant('play.playedAgo', {count: count, dateUnit: translatedDateUnit});
   }
 }
