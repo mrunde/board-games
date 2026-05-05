@@ -1,0 +1,2 @@
+### GET all plays by bggId
+GET http://localhost:8080/board-games/api/plays/173346

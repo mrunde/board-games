@@ -1,5 +1,5 @@
 import {DatePipe, NgFor, NgIf} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule, MatIconButton} from "@angular/material/button";
 import {MatNativeDateModule} from '@angular/material/core';
@@ -66,7 +66,11 @@ import {GameDetail} from '../models/game.model';
             4
             <mat-icon>group</mat-icon>
           </button>
-          <button type="button" (click)="clearFilters()" [class.active]="players == null && !search">
+          <button
+            type="button"
+            (click)="clearFilters()"
+            [class.active]="players == null && !search"
+          >
             {{ 'common.all' | translate }}
           </button>
 
@@ -148,6 +152,18 @@ import {GameDetail} from '../models/game.model';
           <div>{{ 'games.noResults' | translate }}</div>
         </div>
       </ng-template>
+
+      <button
+        *ngIf="showMoveToTop"
+        type="button"
+        class="scroll-to-top"
+        mat-icon-button
+        color="primary"
+        [matTooltip]="'common.toTop' | translate"
+        (click)="scrollToTop()"
+      >
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </button>
     </div>
   `,
   styles: [`
@@ -270,6 +286,29 @@ import {GameDetail} from '../models/game.model';
       border-top: 1px solid #d8d8d8;
       margin: 16px 0 18px;
     }
+
+    .scroll-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+
+      background: #333;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+      &:hover {
+        background: #555;
+      }
+    }
   `]
 })
 export class GamesListComponent implements OnInit {
@@ -282,10 +321,10 @@ export class GamesListComponent implements OnInit {
   sort = 'name';
   dir = 'asc';
 
-  selectedPlayDate: Date | null = new Date();
-
   private readonly storageKey = 'games-list.state.v1';
   private readonly filtersChanged$ = new Subject<void>();
+  private restoredScrollY = 0;
+  showMoveToTop = false;
 
   constructor(private readonly api: BoardgamesService) {
   }
@@ -313,6 +352,7 @@ export class GamesListComponent implements OnInit {
       .pipe(debounceTime(200))
       .subscribe(() => {
         this.saveState();
+        this.restoredScrollY = 0;
         this.load();
       });
 
@@ -327,6 +367,7 @@ export class GamesListComponent implements OnInit {
     ).subscribe(g => {
       this.allGames = g;
       this.applySearchFilter();
+      this.restoreScrollPosition();
     });
   }
 
@@ -380,6 +421,16 @@ export class GamesListComponent implements OnInit {
     this.onFiltersChanged();
   }
 
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.updateMoveToTopButton();
+    this.saveState();
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   private applySearchFilter(): void {
     const query = this.search.trim().toLowerCase();
 
@@ -405,6 +456,7 @@ export class GamesListComponent implements OnInit {
       splitRecommended : this.splitRecommended,
       sort: this.sort,
       dir: this.dir,
+      scrollY: window.scrollY,
     };
 
     sessionStorage.setItem(this.storageKey, JSON.stringify(state));
@@ -423,6 +475,7 @@ export class GamesListComponent implements OnInit {
         splitRecommended: boolean;
         sort: string;
         dir: string;
+        scrollY: number;
       };
 
       this.search = state.search || '';
@@ -434,6 +487,7 @@ export class GamesListComponent implements OnInit {
       }
       this.sort = state.sort || 'name';
       this.dir = state.dir || 'asc';
+      this.restoredScrollY = state.scrollY || 0;
 
       if (this.sort === 'name') {
         this.dir = 'asc';
@@ -448,7 +502,6 @@ export class GamesListComponent implements OnInit {
         }
       }
     } catch {
-      this.selectedPlayDate = new Date();
       this.sort = 'name';
       this.dir = 'asc';
     }
@@ -460,5 +513,21 @@ export class GamesListComponent implements OnInit {
       game.playersRecMin <= this.players &&
       game.playersRecMax >= this.players
     );
+  }
+
+  private restoreScrollPosition(): void {
+    if (this.restoredScrollY <= 0) {
+      this.scrollToTop();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: this.restoredScrollY, behavior: 'auto'});
+      this.updateMoveToTopButton();
+    })
+  }
+
+  private updateMoveToTopButton(): void {
+    this.showMoveToTop = window.scrollY > 0;
   }
 }

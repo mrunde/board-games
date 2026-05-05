@@ -1,4 +1,4 @@
-export function formatLastPlayed(lastPlayed?: string | null, locale?: string): string {
+export function formatLastPlayed(lastPlayed?: Date | string | null, locale?: string): string {
   if (!lastPlayed) {
     return '—';
   }

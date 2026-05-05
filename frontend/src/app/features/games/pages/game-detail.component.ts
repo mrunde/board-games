@@ -5,8 +5,9 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Subject, takeUntil} from 'rxjs';
 import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {BoardgamesService} from '../../../core/api/boardgames.service';
+import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
 import {DetailShellComponent} from '../components/detail-shell.component';
-import {GameDetail} from '../models/game.model';
+import {GameDetail, Play} from '../models/game.model';
 import {DetailPageUiService} from '../services/detail-page-ui.service';
 
 @Component({
@@ -37,6 +38,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       [playDateLabel]="selectedPlayDateLabel"
       [playSubmitting]="playSubmitting"
       [playError]="playError"
+      [lastPlayedEntries]="lastPlayedEntries"
       (selectedPlayDateChange)="selectedPlayDate = $event"
       (back)="goBack()"
       (today)="setToday()"
@@ -131,6 +133,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   playSubmitting = false;
   playError: string | null = null;
   successMessage: string | null = null;
+  lastPlayedEntries: Play[] = [];
   selectedPlayDate: Date | null = new Date();
 
   private readonly destroy$ = new Subject<void>();
@@ -146,8 +149,8 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   }
 
   get selectedPlayDateLabel(): string {
-    return this.ui.toIsoDate(this.selectedPlayDate) ??
-      this.translate.instant('play.today');
+    const lang = this.translate.getCurrentLang() || this.translate.getFallbackLang() || 'en';
+    return formatLastPlayed(this.selectedPlayDate, lang);
   }
 
   ngOnInit(): void {
@@ -178,6 +181,9 @@ export class GameDetailComponent implements OnInit, OnDestroy {
           ?? this.translate.instant('errors.game');
         this.loading = false;
       }
+    });
+    this.api.getPlays(id).subscribe(plays => {
+      this.lastPlayedEntries = plays;
     });
   }
 

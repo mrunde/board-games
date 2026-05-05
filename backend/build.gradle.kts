@@ -21,6 +21,7 @@ repositories {
 
 val exposedVersion = "0.61.0"
 val openApiVersion = "3.0.1"
+val postgresqlVersion = "42.7.11"
 
 dependencies {
   // Spring Boot
@@ -41,9 +42,10 @@ dependencies {
 
   // Flyway migrations
   implementation("org.flywaydb:flyway-core")
+  implementation("org.flywaydb:flyway-database-postgresql")
 
   // Postgres driver
-  runtimeOnly("org.postgresql:postgresql")
+  runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -10,10 +10,11 @@ import {MatInputModule} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
 import {formatRange} from "../../../shared/utils/range-format.util";
-import {AssetFile} from "../models/game.model";
+import {AssetFile, Play} from "../models/game.model";
 import {DetailPageUiService} from "../services/detail-page-ui.service";
 import {GameIndicatorsComponent} from "./game-indicators.component";
 import {LanguageSwitcherComponent} from "./language-switcher.component";
+import {LastPlayedOverviewComponent} from "./last-played-overview.component";
 
 @Component({
   selector: 'detail-shell',
@@ -31,7 +32,8 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
     RouterLink,
     TranslatePipe,
     GameIndicatorsComponent,
-    LanguageSwitcherComponent
+    LanguageSwitcherComponent,
+    LastPlayedOverviewComponent
   ],
   template: `
     <div class="page">
@@ -203,6 +205,8 @@ import {LanguageSwitcherComponent} from "./language-switcher.component";
             </div>
           </div>
         </div>
+
+        <last-played-overview [plays]="lastPlayedEntries"></last-played-overview>
       </div>
 
       <div
@@ -539,6 +543,8 @@ export class DetailShellComponent {
   @Input() playDateLabel = 'today';
   @Input() playSubmitting = false;
   @Input() playError: string | null = null;
+
+  @Input() lastPlayedEntries: Play[] = []
 
   @Output() back = new EventEmitter<void>();
   @Output() today = new EventEmitter<void>();

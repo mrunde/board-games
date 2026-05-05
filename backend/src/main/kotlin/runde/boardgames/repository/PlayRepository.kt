@@ -1,5 +1,6 @@
 package runde.boardgames.repository
 
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,6 +16,7 @@ class PlayRepository {
       Play
         .selectAll()
         .where { Play.bggId eq bggId }
+        .orderBy(Play.playedOn to SortOrder.DESC)
         .map { row -> row.toPlayDto() }
     }
 

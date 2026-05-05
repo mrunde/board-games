@@ -2,7 +2,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {Expansion, GameDetail} from '../../features/games/models/game.model';
+import {Expansion, GameDetail, Play} from '../../features/games/models/game.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +30,10 @@ export class BoardgamesService {
 
   getExpansionById(bggId: number): Observable<Expansion> {
     return this.http.get<Expansion>(`${environment.apiBase}/expansions/${bggId}`);
+  }
+
+  getPlays(bggId: number): Observable<Play[]> {
+    return this.http.get<Play[]>(`${environment.apiBase}/plays/${bggId}`);
   }
 
   recordPlay(bggId: number, playedOn: string): Observable<void> {
