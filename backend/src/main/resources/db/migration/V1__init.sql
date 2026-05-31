@@ -48,8 +48,9 @@ CREATE TABLE IF NOT EXISTS game
 -- PLAY table
 CREATE TABLE IF NOT EXISTS play
 (
-  bgg_id    INTEGER NOT NULL,
-  played_on DATE    NOT NULL,
+  bgg_id     INTEGER NOT NULL,
+  played_on  DATE    NOT NULL,
+  created_on DATE    NOT NULL DEFAULT CURRENT_DATE,
 
   CONSTRAINT pk_play PRIMARY KEY (bgg_id, played_on),
 
