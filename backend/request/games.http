@@ -1,6 +1,9 @@
 ### GET game with expansions by bggId
 GET http://localhost:8080/board-games/api/games/173346
 
+### GET last played game with expansions
+GET http://localhost:8080/board-games/api/games/last-played
+
 ### GET all games with expansions
 GET http://localhost:8080/board-games/api/games
 

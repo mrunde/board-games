@@ -27,6 +27,10 @@ class GameController(
     @PathVariable bggId: Int,
   ): ResponseEntity<GameDetailDto> = ResponseEntity.ok(gameService.getByIdWithExpansions(bggId))
 
+  @GetMapping("/last-played")
+  fun getLastPlayedGame(): ResponseEntity<GameDetailDto> =
+    ResponseEntity.ok(gameService.getLastPlayedGame())
+
   @GetMapping
   fun getAllGamesWithExpansions(
     @RequestParam(required = false) players: Int?,

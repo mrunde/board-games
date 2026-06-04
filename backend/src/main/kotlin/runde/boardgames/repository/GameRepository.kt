@@ -44,6 +44,17 @@ class GameRepository(
         }
     }
 
+  fun findLastPlayedGameId(): Int? =
+    transaction {
+      (Game innerJoin Play)
+        .select(Game.bggId, Play.playedOn)
+        .where { Game.mainGameId eq null }
+        .orderBy(Play.playedOn to SortOrder.DESC)
+        .limit(1)
+        .singleOrNull()
+        ?.let { row -> row[Game.bggId] }
+    }
+
   fun findExpansionsWithLastPlayed(mainGameId: Int): List<Pair<GameDto, LocalDate?>> =
     transaction {
       val lastPlayedExpr = Play.playedOn.max()

@@ -14,10 +14,10 @@ class GameService(
 ) {
   fun getByIdWithExpansions(bggId: Int): GameDetailDto {
     // Get the main game
-    val mainGameWithLastPlayed = gameRepository.findByIdWithLastPlayed(bggId)
-    if (mainGameWithLastPlayed == null || mainGameWithLastPlayed.first.mainGameId != null) {
-      throw NotFoundException("Game not found with id: $bggId")
-    }
+    val mainGameWithLastPlayed =
+      gameRepository.findByIdWithLastPlayed(bggId)
+        ?: throw NotFoundException("Game not found with id: $bggId")
+
     // Get its expansions
     val expansionsWithLastPlayed = gameRepository.findExpansionsWithLastPlayed(bggId)
     // Get the assets
@@ -29,6 +29,14 @@ class GameService(
       files = gameFiles,
       assetService = assetService,
     )
+  }
+
+  fun getLastPlayedGame(): GameDetailDto {
+    val lastPlayedGameId =
+      gameRepository.findLastPlayedGameId()
+        ?: throw NotFoundException("No played game found")
+
+    return getByIdWithExpansions(lastPlayedGameId)
   }
 
   fun getAllWithExpansions(
