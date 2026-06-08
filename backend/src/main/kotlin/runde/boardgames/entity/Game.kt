@@ -22,6 +22,10 @@ object Game : Table("board_games.game") {
   val playersRecMin = integer("players_rec_min")
   val playersRecMax = integer("players_rec_max")
 
+  val spotifyUrl = varchar("spotify_url", 255)
+
+  val notes = varchar("notes", 255)
+
   val mainGameId = optReference("main_game_id", bggId, onDelete = ReferenceOption.RESTRICT)
 
   override val primaryKey = PrimaryKey(bggId, name = "pk_game")
@@ -40,5 +44,7 @@ fun ResultRow.toGameDto(): GameDto =
     playersMax = this[Game.playersMax],
     playersRecMin = this[Game.playersRecMin],
     playersRecMax = this[Game.playersRecMax],
+    spotifyUrl = this[Game.spotifyUrl],
+    notes = this[Game.notes],
     mainGameId = this[Game.mainGameId],
   )

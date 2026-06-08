@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS game
   players_max      INTEGER       NOT NULL,
   players_rec_min  INTEGER       NOT NULL,
   players_rec_max  INTEGER       NOT NULL,
+  spotify_url      VARCHAR(100) DEFAULT NULL,
+  notes            VARCHAR(250) DEFAULT NULL,
   main_game_id     INTEGER       NULL,
 
   CONSTRAINT fk_game_main_game

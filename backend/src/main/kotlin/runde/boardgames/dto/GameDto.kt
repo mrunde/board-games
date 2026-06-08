@@ -46,6 +46,8 @@ data class GameDto(
   @field:NotNull
   @field:Min(1)
   val playersRecMax: Int,
+  val spotifyUrl: String?,
+  val notes: String?,
   @field:Positive
   val mainGameId: Int?,
 ) {
