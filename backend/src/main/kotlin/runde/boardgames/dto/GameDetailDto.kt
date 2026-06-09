@@ -16,6 +16,8 @@ data class GameDetailDto(
   val playersMax: Int,
   val playersRecMin: Int,
   val playersRecMax: Int,
+  val spotifyUrl: String?,
+  val notes: String?,
   val lastPlayed: LocalDate?,
   val files: List<AssetFileDto>,
   val expansions: List<ExpansionDto>,
@@ -40,6 +42,8 @@ data class GameDetailDto(
         playersMax = gameWithLastPlayed.first.playersMax,
         playersRecMin = gameWithLastPlayed.first.playersRecMin,
         playersRecMax = gameWithLastPlayed.first.playersRecMax,
+        spotifyUrl = gameWithLastPlayed.first.spotifyUrl,
+        notes = gameWithLastPlayed.first.notes,
         lastPlayed = gameWithLastPlayed.second,
         files = files,
         expansions =

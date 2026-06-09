@@ -1,5 +1,7 @@
 import {Location, NgFor, NgIf} from '@angular/common';
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatButton} from "@angular/material/button";
+import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Subject, takeUntil} from 'rxjs';
@@ -7,33 +9,21 @@ import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {BoardgamesService} from '../../../core/api/boardgames.service';
 import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
 import {DetailShellComponent} from '../components/detail-shell.component';
+import {GameEditDialogComponent} from "../components/game-edit-dialog.component";
 import {GameDetail, Play} from '../models/game.model';
 import {DetailPageUiService} from '../services/detail-page-ui.service';
 
 @Component({
   selector: 'game-detail',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, DetailShellComponent, TranslatePipe],
+  imports: [NgIf, NgFor, RouterLink, DetailShellComponent, TranslatePipe, MatButton],
   template: `
     <detail-shell
       [loading]="loading"
       [loadingText]="'game.loading' | translate"
       [error]="error"
       [successMessage]="successMessage"
-      [bggId]="game?.bggId"
-      [title]="game?.name"
-      [imageUrl]="game?.imageUrl"
-      [ratingBgg]="game?.ratingBgg"
-      [ratingPersonal]="game?.ratingPersonal"
-      [playingTimeMin]="game?.playingTimeMin"
-      [playingTimeMax]="game?.playingTimeMax"
-      [complexity]="game?.complexity"
-      [playersMin]="game?.playersMin"
-      [playersMax]="game?.playersMax"
-      [playersRecMin]="game?.playersRecMin"
-      [playersRecMax]="game?.playersRecMax"
-      [lastPlayed]="game?.lastPlayed"
-      [files]="game?.files"
+      [game]="game"
       [selectedPlayDate]="selectedPlayDate"
       [playDateLabel]="selectedPlayDateLabel"
       [playSubmitting]="playSubmitting"
@@ -44,6 +34,12 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       (today)="setToday()"
       (recordPlay)="recordPlay()"
     >
+      <div class="edit-game" *ngIf="game">
+        <button mat-flat-button color="primary" type="button" (click)="editGame()">
+          {{ 'common.edit' | translate }}
+        </button>
+      </div>
+
       <div *ngIf="game?.expansions?.length" class="expansions">
         <h2>{{ 'common.expansions' | translate }}</h2>
         <div
@@ -73,6 +69,12 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
     </detail-shell>
   `,
   styles: [`
+    .edit-game {
+      display: flex;
+      justify-content: flex-end;
+      margin: 14px 0;
+    }
+
     .expansions {
       margin-top: 18px;
     }
@@ -142,6 +144,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly api: BoardgamesService,
+    private readonly dialog: MatDialog,
     private readonly location: Location,
     private readonly translate: TranslateService,
     public ui: DetailPageUiService
@@ -184,6 +187,26 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     });
     this.api.getPlays(id).subscribe(plays => {
       this.lastPlayedEntries = plays;
+    });
+  }
+
+  editGame(): void {
+    if (!this.game) return;
+
+    this.dialog.open(GameEditDialogComponent, {
+      data: this.game,
+      width: '760px',
+      maxWidth: '94vw'
+    })
+      .afterClosed().subscribe((updatedGame?: GameDetail) => {
+      if (!updatedGame) return;
+
+      this.api.updateGame(updatedGame).subscribe({
+        next: game => this.game = game,
+        error: err => {
+          this.error = err?.error?.error ?? err?.message ?? this.translate.instant('errors.editGame');
+        }
+      })
     });
   }
 

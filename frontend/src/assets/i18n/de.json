@@ -7,7 +7,9 @@
     "recommended": "★ Empfohlen",
     "loading": "Lade…",
     "apply": "Auswählen",
+    "save": "Speichern",
     "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
     "toTop": "Nach oben"
   },
   "games": {
@@ -26,11 +28,25 @@
     "ratingPersonal": "Persönliche Bewertung",
     "complexity": "Komplexität",
     "time": "Spielzeit",
+    "spotifyUrl": "Spotify-URL",
+    "notes": "Notizen",
     "loading": "Lade Spiel…"
   },
   "expansion": {
     "mainGame": "Hauptspiel",
     "loading": "Lade Erweiterung…"
+  },
+  "rating": {
+    "1": "Schrecklich - widerspricht der Spielbeschreibung.",
+    "2": "Sehr schlecht - werde ich nie wieder spielen.",
+    "3": "Schlecht - werde ich wahrscheinlich nicht wieder spielen.",
+    "4": "Nicht so gut - könnte ich aber nochmal spielen.",
+    "5": "Mittelmäßig - kann man spielen, muss man aber nicht.",
+    "6": "Okay - spiele ich, wenn ich in der Stimmung bin.",
+    "7": "Gut - spiele ich normalerweise gerne mit.",
+    "8": "Sehr gut - spiele ich gerne und würde es empfehlen.",
+    "9": "Ausgezeichnet - spiele ich sehr gerne.",
+    "10": "Hervorragend - werde ich immer gerne spielen."
   },
   "play": {
     "lastPlayed": "Zuletzt gespielt",
@@ -58,6 +74,7 @@
     "game": "Fehler beim Laden des Spiels.",
     "mainGame": "Fehler beim Laden des Hauptspiels.",
     "expansion": "Fehler beim Laden der Erweiterung.",
+    "editGame": "Fehler beim Editieren des Spiels.",
     "play": "Fehler beim Speichern des Spiels."
   }
 }

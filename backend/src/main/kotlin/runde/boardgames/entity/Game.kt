@@ -22,9 +22,9 @@ object Game : Table("board_games.game") {
   val playersRecMin = integer("players_rec_min")
   val playersRecMax = integer("players_rec_max")
 
-  val spotifyUrl = varchar("spotify_url", 255)
+  val spotifyUrl = varchar("spotify_url", 255).nullable()
 
-  val notes = varchar("notes", 255)
+  val notes = varchar("notes", 255).nullable()
 
   val mainGameId = optReference("main_game_id", bggId, onDelete = ReferenceOption.RESTRICT)
 

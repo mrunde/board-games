@@ -10,7 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
 import {formatRange} from "../../../shared/utils/range-format.util";
-import {AssetFile, Play} from "../models/game.model";
+import {AssetFile, Expansion, GameDetail, Play} from "../models/game.model";
 import {DetailPageUiService} from "../services/detail-page-ui.service";
 import {GameIndicatorsComponent} from "./game-indicators.component";
 import {LanguageSwitcherComponent} from "./language-switcher.component";
@@ -65,20 +65,19 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
 
       <div
         class="card"
-        *ngIf="!loading && !error && title"
-        [class.recent]="ui.isRecentlyPlayed(lastPlayed ?? null)"
+        *ngIf="!loading && !error && game?.name"
+        [class.recent]="ui.isRecentlyPlayed(game?.lastPlayed ?? null)"
       >
-        <div class="media" *ngIf="imageUrl">
+        <div class="media" *ngIf="game?.imageUrl">
           <img
             class="cover clickable"
-            [src]="imageUrl!"
+            [src]="game?.imageUrl!"
             (click)="openImagePreview()"
-            (error)="imageUrl = null"
-            [alt]="title"
+            [alt]="game?.name"
           >
         </div>
 
-        <h1>{{ title }}</h1>
+        <h1>{{ game?.name }}</h1>
 
         <div *ngIf="mainGameName && mainGameLink" class="main-game-link">
           {{ 'expansion.mainGame' | translate }}:
@@ -99,13 +98,18 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
         </div>
 
         <game-indicators
-          [bggId]="bggId!!"
+          [bggId]="game?.bggId!!"
           [isExpansion]="mainGameName != null"
-          [ratingBgg]="ratingBgg"
-          [ratingPersonal]="ratingPersonal"
-          [complexity]="complexity"
-          [lastPlayed]="lastPlayed"
+          [ratingBgg]="game?.ratingBgg"
+          [ratingPersonal]="game?.ratingPersonal"
+          [complexity]="game?.complexity"
+          [lastPlayed]="game?.lastPlayed"
         ></game-indicators>
+
+        <section class="notes" *ngIf="game?.notes">
+          <h2>{{ 'game.notes' | translate }}</h2>
+          <p>{{ game?.notes }}</p>
+        </section>
 
         <div class="play-picker">
           <mat-form-field
@@ -176,7 +180,7 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
 
         <ng-content></ng-content>
 
-        <div *ngIf="files?.length" class="asset-section">
+        <div *ngIf="game?.files?.length" class="asset-section">
           <h2 class="asset-title">{{ 'common.files' | translate }}</h2>
 
           <div class="asset-language-groups">
@@ -210,14 +214,14 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
       </div>
 
       <div
-        *ngIf="imagePreviewOpen && imageUrl"
+        *ngIf="imagePreviewOpen && game?.imageUrl"
         class="image-overlay"
         (click)="closeImagePreview()"
       >
         <img
           class="image-preview"
-          [src]="imageUrl!"
-          [alt]="title"
+          [src]="game?.imageUrl!"
+          [alt]="game?.name"
           (click)="$event.stopPropagation()"
         >
         <button
@@ -388,6 +392,20 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
       vertical-align: middle;
     }
 
+    .notes {
+      margin-top: 18px;
+      margin-bottom: 27px;
+    }
+
+    .notes h2 {
+      margin: 0 0 8px;
+    }
+
+    .notes p {
+      margin: 0;
+      white-space: pre-line;
+    }
+
     .play-picker {
       display: flex;
       align-items: flex-end;
@@ -521,20 +539,7 @@ export class DetailShellComponent {
   @Input() error: string | null = null;
   @Input() successMessage: string | null = null;
 
-  @Input() bggId?: number;
-  @Input() title?: string;
-  @Input() imageUrl?: string | null;
-  @Input() ratingBgg?: number;
-  @Input() ratingPersonal?: number | null;
-  @Input() playingTimeMin?: number;
-  @Input() playingTimeMax?: number;
-  @Input() complexity?: number;
-  @Input() playersMin?: number;
-  @Input() playersMax?: number;
-  @Input() playersRecMin?: number;
-  @Input() playersRecMax?: number;
-  @Input() lastPlayed?: string | null;
-  @Input() files?: AssetFile[];
+  @Input() game?: GameDetail | Expansion;
 
   @Input() mainGameName?: string | null;
   @Input() mainGameLink?: unknown[] | null;
@@ -554,26 +559,26 @@ export class DetailShellComponent {
   imagePreviewOpen = false;
 
   constructor(
-    public ui: DetailPageUiService
+    public ui: DetailPageUiService,
   ) {
   }
 
   get playersText(): string {
-    return formatRange(this.playersMin, this.playersMax);
+    return formatRange(this.game?.playersMin, this.game?.playersMax);
   }
 
   get playersRecText(): string {
-    return formatRange(this.playersRecMin, this.playersRecMax);
+    return formatRange(this.game?.playersRecMin, this.game?.playersRecMax);
   }
 
   get playingTimeText(): string {
-    return formatRange(this.playingTimeMin, this.playingTimeMax, ' min');
+    return formatRange(this.game?.playingTimeMin, this.game?.playingTimeMax, ' min');
   }
 
   get groupedFiles(): Array<{ language: string; files: AssetFile[] }> {
     const groups = new Map<string, AssetFile[]>();
 
-    for (const file of this.files || []) {
+    for (const file of this.game?.files || []) {
       const language = (file.language ?? '').toLowerCase();
       const existing = groups.get(language) ?? [];
       existing.push(file);
@@ -603,7 +608,7 @@ export class DetailShellComponent {
   }
 
   openImagePreview(): void {
-    if (this.imageUrl) {
+    if (this.game?.imageUrl) {
       this.imagePreviewOpen = true;
     }
   }

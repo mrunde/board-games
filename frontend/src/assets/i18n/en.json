@@ -7,7 +7,9 @@
     "recommended": "★ Recommended",
     "loading": "Loading…",
     "apply": "Apply",
+    "save": "Save",
     "cancel": "Cancel",
+    "edit": "Edit",
     "toTop": "To top"
   },
   "games": {
@@ -26,11 +28,25 @@
     "ratingPersonal": "Personal Rating",
     "complexity": "Complexity",
     "time": "Playing Time",
+    "spotifyUrl": "Spotify-URL",
+    "notes": "Notes",
     "loading": "Loading game…"
   },
   "expansion": {
     "mainGame": "Hauptspiel",
     "loading": "Loading expansion…"
+  },
+  "rating": {
+    "1": "Awful - defies game description.",
+    "2": "Very bad - won't play ever again.",
+    "3": "Bad - likely won't play this again.",
+    "4": "Not so good - but could play again.",
+    "5": "Mediocre - take it or leave it.",
+    "6": "Ok - will play if in the mood.",
+    "7": "Good - usually willing to play.",
+    "8": "Very good - enjoy playing and would suggest it.",
+    "9": "Excellent - very much enjoy playing.",
+    "10": "Outstanding - will always enjoy playing."
   },
   "play": {
     "lastPlayed": "Last played",
@@ -58,6 +74,7 @@
     "game": "Failed to load game.",
     "mainGame": "Failed to load main game.",
     "expansion": "Failed to load expansion.",
+    "editGame": "Failed to update game.",
     "play": "Failed to save play."
   }
 }

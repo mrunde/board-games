@@ -32,6 +32,10 @@ export class BoardgamesService {
     return this.http.get<Expansion>(`${environment.apiBase}/expansions/${bggId}`);
   }
 
+  updateGame(game: Partial<GameDetail>): Observable<GameDetail> {
+    return this.http.put<GameDetail>(`${environment.apiBase}/games/${game.bggId}`, game);
+  }
+
   getPlays(bggId: number): Observable<Play[]> {
     return this.http.get<Play[]>(`${environment.apiBase}/plays/${bggId}`);
   }

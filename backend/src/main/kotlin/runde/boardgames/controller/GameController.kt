@@ -46,14 +46,14 @@ class GameController(
   @PostMapping
   fun addGame(
     @Valid @RequestBody gameDto: GameDto,
-  ): ResponseEntity<GameDto> =
+  ): ResponseEntity<GameDetailDto> =
     ResponseEntity.status(HttpStatus.CREATED).body(gameService.upsertGame(gameDto))
 
   @PutMapping("/{bggId}")
   fun updateGameById(
     @PathVariable bggId: Int,
     @Valid @RequestBody gameDto: GameDto,
-  ): ResponseEntity<GameDto> {
+  ): ResponseEntity<GameDetailDto> {
     if (bggId != gameDto.bggId) return ResponseEntity.badRequest().build()
 
     return ResponseEntity.ok(gameService.upsertGame(gameDto))

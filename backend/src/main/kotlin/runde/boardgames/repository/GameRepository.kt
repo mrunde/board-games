@@ -103,7 +103,7 @@ class GameRepository(
       }
     }
 
-  fun upsert(game: GameDto): GameDto =
+  fun upsert(game: GameDto): Unit =
     transaction {
       Game.upsert {
         it[bggId] = game.bggId
@@ -117,10 +117,10 @@ class GameRepository(
         it[playersMax] = game.playersMax
         it[playersRecMin] = game.playersRecMin
         it[playersRecMax] = game.playersRecMax
+        it[spotifyUrl] = game.spotifyUrl
+        it[notes] = game.notes
         it[mainGameId] = game.mainGameId
       }
-
-      requireNotNull(findById(game.bggId))
     }
 
   fun deleteById(bggId: Int) =

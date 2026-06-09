@@ -18,9 +18,11 @@ export interface Expansion {
   playersMax: number;
   playersRecMin: number;
   playersRecMax: number;
-  mainGameId: number;
+  spotifyUrl: string | null;
+  notes: string | null;
   lastPlayed: string | null;
   files: AssetFile[];
+  mainGameId: number;
 }
 
 export interface GameDetail {
@@ -36,6 +38,8 @@ export interface GameDetail {
   playersMax: number;
   playersRecMin: number;
   playersRecMax: number;
+  spotifyUrl: string | null;
+  notes: string | null;
   lastPlayed: string | null;
   files: AssetFile[];
   expansions: Expansion[];

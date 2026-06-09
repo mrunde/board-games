@@ -80,9 +80,10 @@ class GameService(
     return sortGames(filtered, sort, dir)
   }
 
-  fun upsertGame(gameDto: GameDto): GameDto {
+  fun upsertGame(gameDto: GameDto): GameDetailDto {
     validateMainGameId(gameDto)
-    return gameRepository.upsert(gameDto)
+    gameRepository.upsert(gameDto)
+    return getByIdWithExpansions(gameDto.bggId)
   }
 
   fun deleteGame(bggId: Int) = gameRepository.deleteById(bggId)
