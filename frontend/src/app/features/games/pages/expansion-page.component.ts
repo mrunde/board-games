@@ -7,11 +7,12 @@ import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {BoardgamesService} from '../../../core/api/boardgames.service';
 import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
 import {DetailShellComponent} from '../components/detail-shell.component';
-import {Expansion, GameDetail, Play} from '../models/game.model';
+import {Expansion, GameDetail} from '../models/game.model';
+import {Play} from "../models/play.model";
 import {DetailPageUiService} from '../services/detail-page-ui.service';
 
 @Component({
-  selector: 'expansion-detail',
+  selector: 'expansion-page',
   standalone: true,
   imports: [DetailShellComponent, TranslatePipe],
   template: `
@@ -36,7 +37,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
     </detail-shell>
   `
 })
-export class ExpansionDetailComponent implements OnInit, OnDestroy {
+export class ExpansionPageComponent implements OnInit, OnDestroy {
   expansion?: Expansion;
   mainGame?: GameDetail;
   loading = false;
@@ -105,7 +106,7 @@ export class ExpansionDetailComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
-    this.api.getPlays(id).subscribe(plays => {
+    this.api.getPlaysById(id).subscribe(plays => {
       this.lastPlayedEntries = plays;
     });
   }

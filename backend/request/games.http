@@ -1,17 +1,17 @@
 ### GET game with expansions by bggId
-GET http://localhost:8080/board-games/api/games/173346
+GET {{host}}/api/games/173346
 
 ### GET last played game with expansions
-GET http://localhost:8080/board-games/api/games/last-played
+GET {{host}}/api/games/last-played
 
 ### GET all games with expansions
-GET http://localhost:8080/board-games/api/games
+GET {{host}}/api/games
 
 ### GET all games with expansions with filters and sorting
-GET http://localhost:8080/board-games/api/games?players=2&sort=ratingPersonal&dir=desc
+GET {{host}}/api/games?players=2&sort=ratingPersonal&dir=desc
 
 ### POST add game
-POST http://localhost:8080/board-games/api/games
+POST {{host}}/api/games
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### PUT update game
-PUT http://localhost:8080/board-games/api/games/123456789
+PUT {{host}}/api/games/123456789
 Content-Type: application/json
 
 {
@@ -47,4 +47,4 @@ Content-Type: application/json
 }
 
 ### DELETE game
-DELETE http://localhost:8080/board-games/api/games/123456789
+DELETE {{host}}/api/games/123456789

@@ -2,7 +2,8 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {Expansion, GameDetail, Play} from '../../features/games/models/game.model';
+import {Expansion, GameDetail} from '../../features/games/models/game.model';
+import {Play, PlayCalendarEntry} from "../../features/games/models/play.model";
 
 @Injectable({
   providedIn: 'root'
@@ -36,8 +37,12 @@ export class BoardgamesService {
     return this.http.put<GameDetail>(`${environment.apiBase}/games/${game.bggId}`, game);
   }
 
-  getPlays(bggId: number): Observable<Play[]> {
+  getPlaysById(bggId: number): Observable<Play[]> {
     return this.http.get<Play[]>(`${environment.apiBase}/plays/${bggId}`);
+  }
+
+  getPlaysByYearAndMonth(year: number, month: number): Observable<PlayCalendarEntry[]> {
+    return this.http.get<PlayCalendarEntry[]>(`${environment.apiBase}/plays/${year}/${month}`);
   }
 
   recordPlay(bggId: number, playedOn: string): Observable<void> {
@@ -45,5 +50,9 @@ export class BoardgamesService {
       bggId,
       playedOn
     });
+  }
+
+  deletePlay(bggId: number, playedOn: string): Observable<void> {
+    return this.http.delete<void>(`${environment.apiBase}/plays/${bggId}/${playedOn}`);
   }
 }

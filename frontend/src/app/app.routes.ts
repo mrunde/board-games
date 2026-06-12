@@ -1,10 +1,12 @@
 import {Routes} from '@angular/router';
-import {ExpansionDetailComponent} from './features/games/pages/expansion-detail.component';
-import {GameDetailComponent} from './features/games/pages/game-detail.component';
-import {GamesListComponent} from './features/games/pages/games-list.component';
+import {ExpansionPageComponent} from './features/games/pages/expansion-page.component';
+import {GamePageComponent} from './features/games/pages/game-page.component';
+import {GamesListPageComponent} from './features/games/pages/games-list-page.component';
+import {PlaysCalendarPageComponent} from "./features/games/pages/plays-calendar-page.component";
 
 export const routes: Routes = [
-  {path: '', component: GamesListComponent},
-  {path: 'games/:id', component: GameDetailComponent},
-  {path: 'expansions/:id', component: ExpansionDetailComponent}
+  {path: '', component: GamesListPageComponent},
+  {path: 'games/:id', component: GamePageComponent},
+  {path: 'expansions/:id', component: ExpansionPageComponent},
+  {path: 'calendar', component: PlaysCalendarPageComponent}
 ];

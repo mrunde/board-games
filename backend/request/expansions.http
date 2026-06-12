@@ -1,2 +1,2 @@
 ### GET expansion by bggId
-GET http://localhost:8080/board-games/api/expansions/202976
+GET {{host}}/api/expansions/202976

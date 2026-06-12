@@ -1,2 +1,11 @@
 ### GET all plays by bggId
-GET http://localhost:8080/board-games/api/plays/173346
+GET {{host}}/api/plays/173346
+
+### DELETE play
+DELETE {{host}}/api/plays
+Content-Type: application/json
+
+{
+  "bggId": 173346,
+  "playedOn": "2026-06-10"
+}

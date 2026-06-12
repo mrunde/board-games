@@ -1,8 +1,10 @@
 package runde.boardgames.service
 
 import org.springframework.stereotype.Service
+import runde.boardgames.dto.PlayCalendarDto
 import runde.boardgames.dto.PlayDto
 import runde.boardgames.repository.PlayRepository
+import java.time.LocalDate
 
 @Service
 class PlayService(
@@ -10,7 +12,17 @@ class PlayService(
 ) {
   fun getAllById(bggId: Int): List<PlayDto> = playRepository.findAllById(bggId)
 
-  fun recordPlay(playDto: PlayDto) {
-    playRepository.recordPlay(playDto)
+  fun getAllByYearAndMonth(
+    year: Int,
+    month: Int,
+  ): List<PlayCalendarDto> = playRepository.findAllByYearAndMonth(year = year, month = month)
+
+  fun recordPlay(playDto: PlayDto): Boolean = playRepository.recordPlay(playDto)
+
+  fun deletePlay(
+    bggId: Int,
+    playedOn: LocalDate,
+  ) {
+    playRepository.deletePlay(bggId, playedOn)
   }
 }

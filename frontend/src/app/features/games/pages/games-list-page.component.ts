@@ -16,7 +16,7 @@ import {LanguageSwitcherComponent} from "../components/language-switcher.compone
 import {GameDetail} from '../models/game.model';
 
 @Component({
-  selector: 'games-list',
+  selector: 'games-list-page',
   standalone: true,
   imports: [
     GameCardComponent,
@@ -311,7 +311,7 @@ import {GameDetail} from '../models/game.model';
     }
   `]
 })
-export class GamesListComponent implements OnInit {
+export class GamesListPageComponent implements OnInit {
   games: GameDetail[] = [];
   allGames: GameDetail[] = [];
   splitRecommended = false;

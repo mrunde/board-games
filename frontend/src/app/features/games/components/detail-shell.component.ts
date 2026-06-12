@@ -10,7 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {TranslatePipe} from "@ngx-translate/core";
 import {formatRange} from "../../../shared/utils/range-format.util";
-import {AssetFile, Expansion, GameDetail, Play} from "../models/game.model";
+import {AssetFile, Expansion, GameDetail} from "../models/game.model";
+import {Play} from "../models/play.model";
 import {DetailPageUiService} from "../services/detail-page-ui.service";
 import {GameIndicatorsComponent} from "./game-indicators.component";
 import {LanguageSwitcherComponent} from "./language-switcher.component";
@@ -210,7 +211,10 @@ import {LastPlayedOverviewComponent} from "./last-played-overview.component";
           </div>
         </div>
 
-        <last-played-overview [plays]="lastPlayedEntries"></last-played-overview>
+        <last-played-overview
+          [plays]="lastPlayedEntries"
+          (deletePlay)="deletePlay.emit($event)"
+        ></last-played-overview>
       </div>
 
       <div
@@ -555,6 +559,7 @@ export class DetailShellComponent {
   @Output() today = new EventEmitter<void>();
   @Output() recordPlay = new EventEmitter<void>();
   @Output() selectedPlayDateChange = new EventEmitter<Date | null>();
+  @Output() deletePlay = new EventEmitter<Play>();
 
   imagePreviewOpen = false;
 

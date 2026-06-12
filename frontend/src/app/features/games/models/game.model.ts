@@ -44,8 +44,3 @@ export interface GameDetail {
   files: AssetFile[];
   expansions: Expansion[];
 }
-
-export interface Play {
-  bggId: number;
-  playedOn: string;
-}

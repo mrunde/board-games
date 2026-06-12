@@ -9,12 +9,16 @@ import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {BoardgamesService} from '../../../core/api/boardgames.service';
 import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
 import {DetailShellComponent} from '../components/detail-shell.component';
+import {
+  ConfirmDeletePlayDialogComponent
+} from "../components/dialogs/confirm-delete-play-dialog.component";
 import {GameEditDialogComponent} from "../components/game-edit-dialog.component";
-import {GameDetail, Play} from '../models/game.model';
+import {GameDetail} from '../models/game.model';
+import {Play} from "../models/play.model";
 import {DetailPageUiService} from '../services/detail-page-ui.service';
 
 @Component({
-  selector: 'game-detail',
+  selector: 'game-page',
   standalone: true,
   imports: [NgIf, NgFor, RouterLink, DetailShellComponent, TranslatePipe, MatButton],
   template: `
@@ -33,6 +37,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
       (back)="goBack()"
       (today)="setToday()"
       (recordPlay)="recordPlay()"
+      (deletePlay)="confirmDeletePlay($event)"
     >
       <div class="edit-game" *ngIf="game">
         <button mat-flat-button color="primary" type="button" (click)="editGame()">
@@ -128,7 +133,7 @@ import {DetailPageUiService} from '../services/detail-page-ui.service';
     }
   `]
 })
-export class GameDetailComponent implements OnInit, OnDestroy {
+export class GamePageComponent implements OnInit, OnDestroy {
   game?: GameDetail;
   loading = false;
   error: string | null = null;
@@ -185,7 +190,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
-    this.api.getPlays(id).subscribe(plays => {
+    this.api.getPlaysById(id).subscribe(plays => {
       this.lastPlayedEntries = plays;
     });
   }
@@ -240,6 +245,24 @@ export class GameDetailComponent implements OnInit, OnDestroy {
           ?? this.translate.instant('errors.play');
       }
     });
+  }
+
+  confirmDeletePlay(play: Play): void {
+    const dialogRef = this.dialog.open(ConfirmDeletePlayDialogComponent, {
+      data: {playedOn: play.playedOn},
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.api.deletePlay(play.bggId, play.playedOn).subscribe({
+        next: () => this.load(play.bggId),
+        error: err => {
+          this.playError = err?.error?.error ?? err?.message
+            ?? this.translate.instant('errors.deletePlay');
+        }
+      })
+    })
   }
 
   goBack(): void {

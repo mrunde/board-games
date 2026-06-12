@@ -10,6 +10,7 @@
     "save": "Speichern",
     "cancel": "Abbrechen",
     "edit": "Bearbeiten",
+    "delete": "Löschen",
     "toTop": "Nach oben"
   },
   "games": {
@@ -64,7 +65,14 @@
     "month": "Monat",
     "months": "Monaten",
     "year": "Jahr",
-    "years": "Jahren"
+    "years": "Jahren",
+    "deleteTitle": "Spieleintrag löschen",
+    "deleteConfirmation": "Möchtest du den Spieleintrag vom {{playedOn}} löschen?"
+  },
+  "calendar": {
+    "previousMonth": "Vorheriger",
+    "nextMonth": "Nächster",
+    "today": "Heute"
   },
   "navigation": {
     "home": "Home",
@@ -75,6 +83,7 @@
     "mainGame": "Fehler beim Laden des Hauptspiels.",
     "expansion": "Fehler beim Laden der Erweiterung.",
     "editGame": "Fehler beim Editieren des Spiels.",
-    "play": "Fehler beim Speichern des Spiels."
+    "play": "Fehler beim Speichern des Spieleintrags.",
+    "deletePlay": "Fehler beim Löschen des Spieleintrags."
   }
 }

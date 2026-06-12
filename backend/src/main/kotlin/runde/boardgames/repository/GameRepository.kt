@@ -13,6 +13,7 @@ import runde.boardgames.dto.GameDto
 import runde.boardgames.entity.Game
 import runde.boardgames.entity.Play
 import runde.boardgames.entity.toGameDto
+import runde.boardgames.exception.BadRequestException
 import runde.boardgames.service.AssetService
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -125,6 +126,19 @@ class GameRepository(
 
   fun deleteById(bggId: Int) =
     transaction {
+      val totalExpansions = countExpansions(bggId)
+      if (totalExpansions > 0) {
+        throw BadRequestException("Exceptions must be deleted before main game can be deleted")
+      }
+
       Game.deleteWhere { Game.bggId eq bggId }
+    }
+
+  private fun countExpansions(mainGameId: Int): Long =
+    transaction {
+      Game
+        .selectAll()
+        .where { Game.mainGameId eq mainGameId }
+        .count()
     }
 }

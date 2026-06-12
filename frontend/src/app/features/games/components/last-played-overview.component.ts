@@ -1,20 +1,22 @@
 import {NgForOf, NgIf} from '@angular/common';
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {MatIconButton} from "@angular/material/button";
 import {MatDividerModule} from '@angular/material/divider';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIcon} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {formatLastPlayed} from "../../../shared/utils/last-played-format.util";
-import {Play} from '../models/game.model';
+import {Play} from "../models/play.model";
 
 @Component({
   selector: 'last-played-overview',
   standalone: true,
   imports: [
-    MatExpansionModule,
     MatDividerModule,
+    MatExpansionModule,
     MatIcon,
+    MatIconButton,
     MatListModule,
     NgForOf,
     NgIf,
@@ -49,6 +51,16 @@ import {Play} from '../models/game.model';
             <div matListItemTitle>
               {{ formatLastPlayedRef(play.playedOn) }}
             </div>
+
+            <button
+              mat-icon-button
+              matListItemMeta
+              type="button"
+              class="delete-play-button"
+              (click)="deletePlay.emit(play)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
           </mat-list-item>
         </mat-list>
       </ng-container>
@@ -111,6 +123,8 @@ import {Play} from '../models/game.model';
 })
 export class LastPlayedOverviewComponent {
   @Input() plays: Play[] = [];
+
+  @Output() deletePlay = new EventEmitter<Play>();
 
   constructor(
     private readonly translate: TranslateService

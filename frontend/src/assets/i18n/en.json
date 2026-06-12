@@ -10,6 +10,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",
+    "delete": "Delete",
     "toTop": "To top"
   },
   "games": {
@@ -64,7 +65,14 @@
     "month": "month",
     "months": "months",
     "year": "year",
-    "years": "years"
+    "years": "years",
+    "deleteTitle": "Delete play",
+    "deleteConfirmation": "Do you want to delete the play from {{playedOn}}?"
+  },
+  "calendar": {
+    "previousMonth": "Previous",
+    "nextMonth": "Next",
+    "today": "Today"
   },
   "navigation": {
     "home": "Home",
@@ -75,6 +83,7 @@
     "mainGame": "Failed to load main game.",
     "expansion": "Failed to load expansion.",
     "editGame": "Failed to update game.",
-    "play": "Failed to save play."
+    "play": "Failed to save play.",
+    "deletePlay": "Failed to delete play."
   }
 }
