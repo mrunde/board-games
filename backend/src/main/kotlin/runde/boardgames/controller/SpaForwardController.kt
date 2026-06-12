@@ -12,6 +12,7 @@ class SpaForwardController {
       "/games/{bggId}",
       "/expansions",
       "/expansions/{bggId}",
+      "/calendar",
     ],
   )
   fun forward(): String = "forward:/index.html"
