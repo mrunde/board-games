@@ -271,7 +271,12 @@ export class PlaysCalendarPageComponent implements OnInit {
       ),
     );
 
-    // Create label for visible month
+    this.updateLabelOfCurrentMonth();
+  }
+
+  private updateLabelOfCurrentMonth(): void {
+    const lang = this.translate.getCurrentLang() || this.translate.getFallbackLang() || 'en';
+
     this.monthLabel = new Intl.DateTimeFormat(lang, {
       month: 'long',
       year: 'numeric'
@@ -295,6 +300,8 @@ export class PlaysCalendarPageComponent implements OnInit {
   }
 
   private loadMonth(): void {
+    this.updateLabelOfCurrentMonth();
+
     const year = this.visibleMonth.getFullYear();
     const month = this.visibleMonth.getMonth() + 1;
 
