@@ -20,7 +20,7 @@ repositories {
 }
 
 val exposedVersion = "0.61.0"
-val openApiVersion = "3.0.1"
+val openApiVersion = "3.2.0"
 val postgresqlVersion = "42.7.11"
 
 dependencies {
