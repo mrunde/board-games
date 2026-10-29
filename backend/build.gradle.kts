@@ -19,7 +19,7 @@ repositories {
   mavenCentral()
 }
 
-val exposedVersion = "0.61.0"
+val exposedVersion = "1.6.0"
 val openApiVersion = "3.0.1"
 val postgresqlVersion = "42.7.11"
 
