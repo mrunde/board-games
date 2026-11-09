@@ -1,7 +1,7 @@
 plugins {
-  kotlin("jvm") version "2.2.21"
-  kotlin("plugin.spring") version "2.2.21"
-  id("org.springframework.boot") version "4.0.2"
+  kotlin("jvm") version "2.4.21"
+  kotlin("plugin.spring") version "2.4.21"
+  id("org.springframework.boot") version "4.1.2"
   id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -19,9 +19,9 @@ repositories {
   mavenCentral()
 }
 
-val exposedVersion = "0.61.0"
-val openApiVersion = "3.0.1"
-val postgresqlVersion = "42.7.11"
+val exposedVersion = "1.6.1"
+val openApiVersion = "3.2.0"
+val postgresqlVersion = "42.7.14"
 
 dependencies {
   // Spring Boot

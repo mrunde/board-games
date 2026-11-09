@@ -1,8 +1,8 @@
 package runde.boardgames.entity
 
-import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.ReferenceOption
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.Table
 import runde.boardgames.dto.GameDto
 
 object Game : Table("board_games.game") {
